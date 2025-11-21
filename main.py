@@ -1,10 +1,11 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-from RG import *
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
+import RG
 
 app = FastAPI()
 
-@app.get("/")
+
+@app.get("/", response_class=HTMLResponse)
 def root():
     return '''
 <!DOCTYPE html>
@@ -167,10 +168,94 @@ def root():
 </html>
 '''
 
-# @app.get("/test", response_class=HTMLResponse)
-# def test():
-#     return "<html><head><title>Test Page</title></head><body><h1>This is a test page</h1></body></html>"
-
+# LISTING
 @app.get("/projects")
 def projects():
-    return mesProjects()
+    return RG.mesProjects()
+
+@app.get("/tasks")
+def tasks():
+    return RG.mesTasks()
+
+@app.get("/users")
+def users():
+    return RG.mesUsers()
+
+@app.get("/roles")
+def roles():
+    return RG.mesRoles()
+
+@app.get("/grants")
+def grants():
+    return RG.mesGrants()
+
+@app.get("/alloc")
+def alloc():
+    return RG.mesAlloc()
+
+@app.get("/depend")
+def depend():
+    return RG.mesDepend()
+
+
+# CREATE ROUTES
+@app.post("/projects/create")
+async def create_project(request: Request):
+    data = dict(await request.form())
+    RG.saveProject(data)
+    return RedirectResponse("/", status_code=302)
+
+
+@app.post("/tasks/create")
+async def create_task(request: Request):
+    data = dict(await request.form())
+    RG.saveTask(data)
+    return RedirectResponse("/", status_code=302)
+
+
+@app.post("/users/create")
+async def create_user(request: Request):
+    data = dict(await request.form())
+    RG.saveUser(data)
+    return RedirectResponse("/", status_code=302)
+
+
+@app.post("/roles/create")
+async def create_role(request: Request):
+    data = dict(await request.form())
+    RG.saveRole(data)
+    return RedirectResponse("/", status_code=302)
+
+
+@app.post("/grants/create")
+async def create_grant(request: Request):
+    data = dict(await request.form())
+    RG.saveGrant(data)
+    return RedirectResponse("/", status_code=302)
+
+
+@app.post("/alloc/create")
+async def create_alloc(request: Request):
+    data = dict(await request.form())
+    RG.saveAlloc(data)
+    return RedirectResponse("/", status_code=302)
+
+
+@app.post("/depend/create")
+async def create_depend(request: Request):
+    data = dict(await request.form())
+    RG.saveDepend(data)
+    return RedirectResponse("/", status_code=302)
+
+
+# UPDATE GENERIQUE
+@app.get("/update")
+def update(request: Request):
+    params = dict(request.query_params)
+    return RG.updateGeneric(params)
+
+
+# SEARCH GENERIQUE
+@app.get("/search/{query}")
+def search(query: str):
+    return RG.searchGeneric(query)
