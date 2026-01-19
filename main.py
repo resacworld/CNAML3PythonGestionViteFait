@@ -17,6 +17,7 @@ def projects():
 
 @app.get("/tasks")
 def tasks():
+    print("/tascks called")
     return RG.mesTasks()
 
 @app.get("/users")
@@ -44,7 +45,8 @@ def depend():
 
 @app.post("/projects/create")
 async def create_project(request: Request):
-    data = dict(await request.form())
+    data = dict(await request.json())
+    print("data : ", data)
     RG.saveProject(data)
     return RedirectResponse("/", status_code=303)
 
@@ -52,6 +54,7 @@ async def create_project(request: Request):
 @app.post("/tasks/create")
 async def create_task(request: Request):
     data = dict(await request.form())
+    print("data : ", data)
     RG.saveTask(data)
     return RedirectResponse("/", status_code=303)
 
@@ -59,6 +62,7 @@ async def create_task(request: Request):
 @app.post("/users/create")
 async def create_user(request: Request):
     data = dict(await request.form())
+    print("data : ", data)
     RG.saveUser(data)
     return RedirectResponse("/", status_code=303)
 
@@ -66,6 +70,7 @@ async def create_user(request: Request):
 @app.post("/roles/create")
 async def create_role(request: Request):
     data = dict(await request.form())
+    print("data : ", data)
     RG.saveRole(data)
     return RedirectResponse("/", status_code=303)
 
@@ -73,6 +78,7 @@ async def create_role(request: Request):
 @app.post("/grants/create")
 async def create_grant(request: Request):
     data = dict(await request.form())
+    print("data : ", data)
     RG.saveGrant(data)
     return RedirectResponse("/", status_code=303)
 
@@ -80,6 +86,7 @@ async def create_grant(request: Request):
 @app.post("/alloc/create")
 async def create_alloc(request: Request):
     data = dict(await request.form())
+    print("data : ", data)
     RG.saveAlloc(data)
     return RedirectResponse("/", status_code=303)
 
@@ -87,8 +94,10 @@ async def create_alloc(request: Request):
 @app.post("/depend/create")
 async def create_depend(request: Request):
     data = dict(await request.form())
+    print("data : ", data)
     RG.saveDepend(data)
     return RedirectResponse("/", status_code=303)
+
 
 
 # ================= UPDATE SPECIFIQUE (HTML) =================
