@@ -149,3 +149,38 @@ def delete_project_db(project_id):
     c.execute("DELETE FROM PROJECTS WHERE id=?", (project_id,))
     conn.commit()
     conn.close()
+
+def delete_task_db(task_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM TASKS WHERE id=?", (task_id,))
+    conn.commit()
+    conn.close()
+
+def delete_user_db(user_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM USERS WHERE id=?", (user_id,))
+    conn.commit()
+    conn.close()
+
+def delete_role_db(role_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM ROLES WHERE id=?", (role_id,))
+    conn.commit()
+    conn.close()
+
+def delete_grant_db(grant_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM GRANTS WHERE id=?", (grant_id,))
+    conn.commit()
+    conn.close()
+
+def delete_alloc_db(alloc_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM ALLOC WHERE id=?", (alloc_id,))
+    conn.commit()
+    conn.close()

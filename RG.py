@@ -308,14 +308,14 @@ def render_projects_rows():
       <td>{end}</td>
 
       <td style="text-align:center;">
-        <!-- ✏️ MODIFIER -->
+        <!-- MODIFIER -->
         <a href="/projects/edit/{number}"
           title="Modifier"
           style="color:#2563eb; margin-right:12px;">
           <i class="fas fa-pen"></i>
         </a>
 
-        <!-- 🗑️ SUPPRIMER -->
+        <!-- SUPPRIMER -->
         <form method="POST"
               action="/projects/delete/{number}"
               style="display:inline;"
