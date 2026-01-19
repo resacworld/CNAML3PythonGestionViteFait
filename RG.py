@@ -53,6 +53,7 @@ def verifier_user(data):
 def verifier_projet(data):
     
     title, description, begin, end, advance, status, priority = data.get("title"), data.get("description"), data.get("begin"), data.get("end"), data.get("advance"), data.get("status"), data.get("priority")
+    print(title, description, begin, end, advance, status, priority)
 
     # 1. Nettoyage des textes
     title = title.strip() if title else ""
@@ -72,20 +73,20 @@ def verifier_projet(data):
         return False
 
     # 5. Vérification de la priorité (1 à 5)
-    if not (1 <= int(priority) <= 5):
-        return False
+    #if not (1 <= int(priority) <= 5):
+    #    return False
 
     # 6. Vérification du statut (liste autorisée)
-    statuts_valides = ["À faire", "En cours", "Terminé", "En pause"]
-    if status not in statuts_valides:
-        return False
-
+    #statuts_valides = ["À faire", "En cours", "Terminé", "En pause"]
+    #if status not in statuts_valides:
+    #    return False
+    print("vrai")
     return True
 
 def verifier_task(data):
 
     project, title, description, due_date, status, estimated, done, emergency = data.get("project"), data.get("title"), data.get("description"), data.get("due_date"), data.get("status"), data.get("estimated"), data.get("done"), data.get("emergency")
-
+    print(project, title, description, due_date, status, estimated, done, emergency)
     # 1. Nettoyage et vérification des champs obligatoires
     title = title.strip() if title else ""
     description = description.strip() if description else ""
@@ -98,20 +99,21 @@ def verifier_task(data):
         return False
 
     # 3. Vérification des nombres (doivent être positifs)
-    try:
-        if int(estimated) < 0 or int(done) < 0:
-            return False
-    except (ValueError, TypeError):
-        return False
+    # try:
+    #     if int(estimated) < 0 or int(done) < 0:
+    #         return False
+    # except (ValueError, TypeError):
+    #     return False
 
     # 4. Vérification de l'urgence (1 à 5)
-    if not (1 <= int(emergency) <= 5):
-        return False
+    #if not (1 <= int(emergency) <= 5):
+    #    return False
 
     # 5. Vérification du statut
-    if status not in ["À faire", "En cours", "Terminé"]:
-        return False
+    #if status not in ["À faire", "En cours", "Terminé"]:
+    #    return False
 
+    print("vrai task")
     return True
 
 def verifier_grant(data):
@@ -451,11 +453,11 @@ def page_html_old():
             <label>Description</label><textarea name="description" rows="3"></textarea>
             <div class="form-row">
               <div><label>Date fin</label><input type="date" name="end"></div>
-              <div><label>Avancement (%)</label><input type="text" name="advance" placeholder="50"></div>
+              <div><label>Avancement (%)</label><input type="text" name="advance" placeholder="1 à 100"></div>
             </div>
             <div class="form-row">
               <div><label>Statut</label><input type="text" name="status" placeholder="En cours"></div>
-              <div><label>Priorité</label><input type="text" name="priority" placeholder="Haute"></div>
+              <div><label>Priorité</label><input type="text" name="priority" placeholder="1 à 5"></div>
             </div>
             <button type="submit">Créer le projet</button>
           </form>
