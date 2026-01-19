@@ -279,32 +279,58 @@ def render_projects_rows():
         priority = p[7]
 
         rows.append(f"""
-        <tr>
-          <td style="font-weight:600;">{number}</td>
-          <td>
-            <strong>{title}</strong><br>
-            <small style="color:#6b7280;">{desc}</small>
-          </td>
-          <td>
-            <span class="badge status-{status.lower().replace(' ', '-')}">
-              {status}
-            </span>
-          </td>
-          <td>
-            <div class="progress">
-              <div class="progress-bar" style="width:{advance}%;">
-                {advance}%
-              </div>
-            </div>
-          </td>
-          <td>
-            <span class="badge priority-{priority.lower().replace(' ', '-')}">
-              {priority}
-            </span>
-          </td>
-          <td>{end}</td>
-        </tr>
-        """)
+    <tr>
+      <td style="font-weight:600;">{number}</td>
+
+      <td>
+        <strong>{title}</strong><br>
+        <small style="color:#6b7280;">{desc}</small>
+      </td>
+
+      <td>
+        <span class="badge status-{status.lower().replace(' ', '-')}">
+          {status}
+        </span>
+      </td>
+
+      <td>
+        <div class="progress">
+          <div class="progress-bar" style="width:{advance}%;">
+            {advance}%
+          </div>
+        </div>
+      </td>
+
+      <td>
+        <span class="badge priority-{priority.lower().replace(' ', '-')}">
+          {priority}
+        </span>
+      </td>
+
+      <td>{end}</td>
+
+      <td style="text-align:center;">
+        <!-- ✏️ MODIFIER -->
+        <a href="/projects/edit/{number}"
+          title="Modifier"
+          style="color:#2563eb; margin-right:12px;">
+          <i class="fas fa-pen"></i>
+        </a>
+
+        <!-- 🗑️ SUPPRIMER -->
+        <form method="POST"
+              action="/projects/delete/{number}"
+              style="display:inline;"
+              onsubmit="return confirm('Supprimer ce projet ?');">
+          <button type="submit"
+                  style="background:none; border:none; color:#ef4444; cursor:pointer;">
+            <i class="fas fa-trash"></i>
+          </button>
+        </form>
+      </td>
+    </tr>
+  """)
+
 
     return "\n".join(rows), len(projects)
 
