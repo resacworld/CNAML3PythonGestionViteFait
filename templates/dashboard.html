@@ -117,10 +117,12 @@
       <div class="card-body">
         <div class="tabs">
           <button class="tab active" onclick="openTab(event,'create-project')">Créer</button>
-          <button class="tab" onclick="openTab(event,'edit-project')">Modifier</button>
+          <!-- <button class="tab" onclick="openTab(event,'edit-project')">Modifier</button> -->
         </div>
         <div id="create-project" class="tab-content active">
+          <!-- <form method="POST" action="/projects/create"> -->
           <form method="POST" action="/projects/create">
+
             <div class="form-row">
               <div><label>Titre</label><input type="text" name="title" required></div>
               <div><label>Date début</label><input type="date" name="begin"></div>
@@ -157,7 +159,7 @@
       <div class="card-body">
         <div class="tabs">
           <button class="tab active" onclick="openTab(event,'create-task')">Créer</button>
-          <button class="tab" onclick="openTab(event,'edit-task')">Modifier</button>
+          <!-- <button class="tab" onclick="openTab(event,'edit-task')">Modifier</button> -->
         </div>
         <div id="create-task" class="tab-content active">
           <form method="POST" action="/tasks/create">
@@ -260,6 +262,7 @@
                 <th style="width:150px;">Avancement</th>
                 <th>Priorité</th>
                 <th>Date fin</th>
+                <th style="width:120px; text-align:center;">Actions</th>
               </tr>
             </thead>
             <tbody id="projectsList">

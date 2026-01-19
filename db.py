@@ -141,3 +141,11 @@ def search_all(keyword):
 
     conn.close()
     return results
+
+
+def delete_project_db(project_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("DELETE FROM PROJECTS WHERE id=?", (project_id,))
+    conn.commit()
+    conn.close()
