@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 import RG
+from db import insert
 
 app = FastAPI()
 
@@ -45,49 +46,56 @@ def depend():
 @app.post("/projects/create")
 async def create_project(request: Request):
     data = dict(await request.form())
-    RG.saveProject(data)
+    if RG.saveProject(data):
+        insert("PROJECTS", data)
     return RedirectResponse("/", status_code=303)
 
 
 @app.post("/tasks/create")
 async def create_task(request: Request):
     data = dict(await request.form())
-    RG.saveTask(data)
+    if RG.saveTask(data):
+        insert("TASKS", data)
     return RedirectResponse("/", status_code=303)
 
 
 @app.post("/users/create")
 async def create_user(request: Request):
     data = dict(await request.form())
-    RG.saveUser(data)
+    if RG.saveUser(data):
+        insert("USERS", data)
     return RedirectResponse("/", status_code=303)
 
 
 @app.post("/roles/create")
 async def create_role(request: Request):
     data = dict(await request.form())
-    RG.saveRole(data)
+    if RG.saveRole(data):
+        insert("ROLES", data)
     return RedirectResponse("/", status_code=303)
 
 
 @app.post("/grants/create")
 async def create_grant(request: Request):
     data = dict(await request.form())
-    RG.saveGrant(data)
+    if RG.saveGrant(data):
+        insert("GRANTS", data)
     return RedirectResponse("/", status_code=303)
 
 
 @app.post("/alloc/create")
 async def create_alloc(request: Request):
     data = dict(await request.form())
-    RG.saveAlloc(data)
+    if RG.saveAlloc(data):
+        insert("ALLOC", data)
     return RedirectResponse("/", status_code=303)
 
 
 @app.post("/depend/create")
 async def create_depend(request: Request):
     data = dict(await request.form())
-    RG.saveDepend(data)
+    if RG.saveDepend(data):
+        insert("DEPEND", data)
     return RedirectResponse("/", status_code=303)
 
 
