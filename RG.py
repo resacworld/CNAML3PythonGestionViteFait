@@ -1,3 +1,5 @@
+import sqlite3
+import re
 from db import fetch_all, insert, update, search_all, init_db
 
 init_db()
@@ -10,7 +12,7 @@ def mesProjects():
 
 def mesTasks():
     return fetch_all("TASKS")
-
+   
 def mesUsers():
     return fetch_all("USERS")
 
@@ -26,36 +28,191 @@ def mesAlloc():
 def mesDepend():
     return fetch_all("DEPEND")
 
-
 # ======== SAVE (CREATE) ========
 
+def verifier_user(data):
+    
+    name, surname, mail = data.get("name"), data.get("surname"), data.get("mail")
+    
+# 1. Nettoyage et vérification si les champs sont vides
+    name = name.strip() if name else ""
+    surname = surname.strip() if surname else ""
+    mail = mail.strip() if mail else ""
+
+    if not name or not surname or not mail:
+        return False
+
+    # 2. Vérification simplifiée du format email
+    # Structure : texte + @ + texte + . + texte
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", mail):
+        return False
+
+    # Si on arrive ici, tout est valide
+    return True
+
+def verifier_projet(data):
+    
+    title, description, begin, end, advance, status, priority = data.get("title"), data.get("description"), data.get("begin"), data.get("end"), data.get("advance"), data.get("status"), data.get("priority")
+
+    # 1. Nettoyage des textes
+    title = title.strip() if title else ""
+    description = description.strip() if description else ""
+    
+    # 2. Vérification des champs obligatoires
+    if not title or not description:
+        return False
+
+    # 3. Vérification du format des dates (AAAA-MM-JJ)
+    date_pattern = r"^\d{4}-\d{2}-\d{2}$"
+    if not re.match(date_pattern, str(begin)) or not re.match(date_pattern, str(end)):
+        return False
+
+    # 4. Vérification de la progression (0 à 100)
+    if not (0 <= int(advance) <= 100):
+        return False
+
+    # 5. Vérification de la priorité (1 à 5)
+    if not (1 <= int(priority) <= 5):
+        return False
+
+    # 6. Vérification du statut (liste autorisée)
+    statuts_valides = ["À faire", "En cours", "Terminé", "En pause"]
+    if status not in statuts_valides:
+        return False
+
+    return True
+
+def verifier_task(data):
+
+    project, title, description, due_date, status, estimated, done, emergency = data.get("project"), data.get("title"), data.get("description"), data.get("due_date"), data.get("status"), data.get("estimated"), data.get("done"), data.get("emergency")
+
+    # 1. Nettoyage et vérification des champs obligatoires
+    title = title.strip() if title else ""
+    description = description.strip() if description else ""
+    
+    if not title or not description or project is None:
+        return False
+
+    # 2. Vérification du format de la date (AAAA-MM-JJ)
+    if not re.match(r"^\d{4}-\d{2}-\d{2}$", str(due_date)):
+        return False
+
+    # 3. Vérification des nombres (doivent être positifs)
+    try:
+        if int(estimated) < 0 or int(done) < 0:
+            return False
+    except (ValueError, TypeError):
+        return False
+
+    # 4. Vérification de l'urgence (1 à 5)
+    if not (1 <= int(emergency) <= 5):
+        return False
+
+    # 5. Vérification du statut
+    if status not in ["À faire", "En cours", "Terminé"]:
+        return False
+
+    return True
+
+def verifier_grant(data):
+
+    project_id, user_id, role_id = data.get("project_id"), data.get("user_id"), data.get("role_id")
+
+    # 1. Vérification que les IDs ne sont pas vides (None)
+    if project_id is None or user_id is None or role_id is None:
+        return False
+
+    # 2. Vérification que ce sont bien des nombres entiers
+    # (indispensable pour les clés étrangères)
+    try:
+        project_id = int(project_id)
+        user_id = int(user_id)
+        role_id = int(role_id)
+    except (ValueError, TypeError):
+        return False
+
+    # 3. Règle : Les IDs doivent être strictement supérieurs à 0
+    # (Un ID auto-incrémenté en SQL commence à 1)
+    if project_id <= 0 or user_id <= 0 or role_id <= 0:
+        return False
+
+    return True
+
+def verifier_alloc(data):
+
+    task_id, user_id = data.get("task_id"), data.get("user_id")
+
+    # 1. Vérification que les IDs ne sont pas vides
+    if task_id is None or user_id is None:
+        return False
+
+    # 2. Vérification du type (doit être convertible en entier)
+    try:
+        task_id = int(task_id)
+        user_id = int(user_id)
+    except (ValueError, TypeError):
+        return False
+
+    # 3. Règle : Les identifiants SQL commencent à 1
+    if task_id <= 0 or user_id <= 0:
+        return False
+
+    return True
+
+def verifier_depend(data):
+
+    task_from_id, task_to_id = data.get("task_from_id"), data.get("task_to_id")
+
+    # 1. Vérification que les IDs ne sont pas vides
+    if task_from_id is None or task_to_id is None:
+        return False
+
+    # 2. Vérification du type (nombres entiers)
+    try:
+        t_from = int(task_from_id)
+        t_to = int(task_to_id)
+    except (ValueError, TypeError):
+        return False
+
+    # 3. Règle : Les IDs doivent être positifs
+    if t_from <= 0 or t_to <= 0:
+        return False
+
+    # 4. Règle de gestion métier : Une tâche ne peut pas dépendre d'elle-même
+    # (Cela créerait une boucle infinie)
+    if t_from == t_to:
+        return False
+
+    return True
+
 def saveProject(data):
-    insert("PROJECTS", data)
-    return {"status": "Projet enregistré"}
+    
+    #insert("PROJECTS", data)
+    return verifier_projet(data)
 
 def saveTask(data):
-    insert("TASKS", data)
-    return {"status": "Tâche enregistrée"}
+    #insert("TASKS", data)
+    return verifier_task(data)
 
 def saveUser(data):
-    insert("USERS", data)
-    return {"status": "Utilisateur enregistré"}
+    #insert("USERS", data)
+    return verifier_user(data)
 
 def saveRole(data):
-    insert("ROLES", data)
+    #insert("ROLES", data)
     return {"status": "Rôle enregistré"}
 
 def saveGrant(data):
-    insert("GRANTS", data)
-    return {"status": "Grant enregistré"}
+    #insert("GRANTS", data)
+    return verifier_grant(data)
 
 def saveAlloc(data):
-    insert("ALLOC", data)
-    return {"status": "Allocation enregistrée"}
+    #insert("ALLOC", data)
+    return verifier_alloc(data)
 
 def saveDepend(data):
-    insert("DEPEND", data)
-    return {"status": "Dépendance enregistrée"}
+    #insert("DEPEND", data)
+    return verifier_depend(data)
 
 
 # ======== UPDATE GENERIQUE ========
@@ -79,7 +236,7 @@ def updateGeneric(params):
                 update(table, int(record_id), params)
                 return { "status": f"{table} modifié" }
             else:
-                insert(table, params)
+                #insert(table, params)
                 return { "status": f"{table} créé" }
 
     return {"error": "Aucune table reconnue"}
