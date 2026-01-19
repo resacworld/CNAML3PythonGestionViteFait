@@ -18,6 +18,7 @@ def projects():
 
 @app.get("/tasks")
 def tasks():
+    print("/tascks called")
     return RG.mesTasks()
 
 @app.get("/users")
@@ -97,6 +98,7 @@ async def create_depend(request: Request):
     if RG.saveDepend(data):
         insert("DEPEND", data)
     return RedirectResponse("/", status_code=303)
+
 
 
 # ================= UPDATE SPECIFIQUE (HTML) =================
