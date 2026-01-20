@@ -1,6 +1,6 @@
 import sqlite3                                                      # Gestion de la base de données SQLite
-import re       
-from datetime import datetime                                                    # Expressions regulières pour validation
+import re                                                           # Module pour les expressions régulières    
+from datetime import datetime                                       # Expressions regulières pour validation
 from db import fetch_all, insert, update, search_all, init_db       # Fonction de gestion de la BDD Base de données 
 
 init_db()
@@ -269,14 +269,14 @@ def render_projects_rows(): # Génère les lignes HTML pour la liste des projets
     rows = []
 
     for p in projects:
-        number   = p[0]
-        title    = p[1]
-        desc     = p[2]
-        begin    = p[3]
-        end      = p[4]
-        advance  = p[5]
-        status   = p[6]
-        priority = p[7]
+        number   = p[0] # identifiant
+        title    = p[1] # titre
+        desc     = p[2] # description
+        begin    = p[3] # date début 
+        end      = p[4] # date fin
+        advance  = p[5] # 0 à 100
+        status   = p[6] # en cours, termine, en attente, bloque, a faire
+        priority = p[7] # Critique, haute, moyenne, basse
 
         rows.append(f"""
     <tr>
@@ -364,7 +364,7 @@ def render_user_rows():
         """) 
     return "\n".join(rows)
 
-def page_html(mode="main", project=None):
+def page_html(mode="main", project=None): # Génère la page HTML du tableau de bord 
     html = open("templates/dashboard.html").read()
 
     if mode == "edit" and project:
@@ -405,11 +405,9 @@ def page_html(mode="main", project=None):
           .replace("{{ADVANCE}}", str(0)) 
           
 
-    # Affichage de la liste des projets
-    
-    project_rows, count = render_projects_rows()
-    html = html.replace("{{PROJECT_ROWS}}", project_rows)
-    html = html.replace("{{PROJECT_COUNT}}", str(count))
+    project_rows, count = render_projects_rows() # Génère les lignes HTML pour la liste des projets
+    html = html.replace("{{PROJECT_ROWS}}", project_rows) # Insère les lignes dans le template HTML
+    html = html.replace("{{PROJECT_COUNT}}", str(count)) # Insère le nombre de projets dans le template HTML
 
     # Affichage de la liste des utilisateurs inscrits
 
