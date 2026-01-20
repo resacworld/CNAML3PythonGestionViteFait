@@ -332,7 +332,7 @@ def render_projects_rows(): # Génère les lignes HTML pour la liste des projets
   """)
 
 
-    return "\n".join(rows), len(projects)
+    return "\n".join(rows), len(projects) # Retourne les lignes HTML et le nombre de projets
 
 
 def page_html(mode="main", project=None): # Génère la page HTML du tableau de bord 
@@ -360,6 +360,7 @@ def page_html(mode="main", project=None): # Génère la page HTML du tableau de 
             .replace("{{STATUS_A_FAIRE}}", "selected" if project["status"] == "A faire" else "")
 
     else:
+        # Creation des champs vides pour un nouveau projet
         html = html \
           .replace("{{FORM_ACTION}}", "/projects/create") \
           .replace("{{TITLE}}", "") \
