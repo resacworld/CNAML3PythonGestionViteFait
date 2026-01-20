@@ -91,6 +91,13 @@ def fetch_all(table):
     conn.close()
     return rows
 
+def fetch_by_id(table, record_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute(f"SELECT * FROM {table} WHERE id=?", (record_id,))
+    row = c.fetchone()
+    conn.close()
+    return row
 
 def insert(table, data: dict):
     conn = get_connection()

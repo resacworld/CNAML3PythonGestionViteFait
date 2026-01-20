@@ -191,8 +191,8 @@
             </div>
             <label>Description</label><textarea name="description" rows="2"></textarea>
             <div class="form-row">
-              <div><label>Date limite</label><input type="date" name="due_date"></div>
-              <div><label>Statut</label><input type="text" name="status" placeholder="À faire"></div>
+              <div><label>Date limite</label><input type="date" name="due_date" required></div>
+              <div><label>Statut</label><input type="text" name="status" placeholder="À faire" required></div>
             </div>
             <button type="submit">Enregistrer la tâche</button>
           </form>
@@ -318,6 +318,7 @@
                 <th style="width:150px;">Avancement</th>
                 <th>Priorité</th>
                 <th>Date fin</th>
+                <th>Personne(s)</th>
                 <th style="width:120px; text-align:center;">Actions</th>
               </tr>
             </thead>
@@ -333,7 +334,7 @@
     </div>
 
     <!-- Liste des utilisateurs -->
-    <div>
+    <div class="card" style="grid-column:1/3;">
       <div class="card-header">Liste des utilisateurs</div>
       <div class="card-body" style="padding:0;">
         <div style="overflow-x:auto;">

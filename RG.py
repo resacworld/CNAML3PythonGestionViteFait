@@ -1,7 +1,7 @@
 import sqlite3                                                      # Gestion de la base de données SQLite
 import re                                                           # Module pour les expressions régulières    
 from datetime import datetime                                       # Expressions regulières pour validation
-from db import fetch_all, insert, update, search_all, init_db       # Fonction de gestion de la BDD Base de données 
+from db import fetch_all, insert, update, search_all, init_db, fetch_by_id       # Fonction de gestion de la BDD Base de données 
 
 init_db()
 
@@ -121,9 +121,7 @@ def verifier_task(data):
     return True
 
 def verifier_grant(data):
-
-    project_id, user_id, role_id = data.get("project_id"), data.get("user_id"), data.get("role_id") # Récupère les données du dictionnaire data
-
+    project_id, user_id, role_id = data.get("project"), data.get("user"), data.get("role") # Récupère les données du dictionnaire data
     # Vérification que les IDs ne sont pas vides (None)
     if project_id is None or user_id is None or role_id is None:
         return False
@@ -264,6 +262,23 @@ def searchGeneric(query): # Recherche générique dans la base de données en fo
 
     return search_all(query)
 
+def pers_assigneed_to_project(project_id): # Récupère les personnes assignées à un projet donné
+    grants = fetch_all("GRANTS")
+    users = fetch_all("USERS")
+
+    assigned_users = []
+    for g in grants:
+        grant_project_id = g[1]
+        user_id = g[2]
+
+        if grant_project_id == project_id:
+            user = next((u for u in users if u[0] == user_id), None)
+            role_of_user = fetch_by_id("ROLES", g[3])[1]
+            if user:
+                assigned_users.append(f"{user[1]} {user[2]} ({role_of_user})") # Nom et prénom
+
+    return ", ".join(assigned_users) if assigned_users else "Aucun"
+
 def render_projects_rows(): # Génère les lignes HTML pour la liste des projets 
     projects = fetch_all("PROJECTS")
     rows = []
@@ -308,6 +323,10 @@ def render_projects_rows(): # Génère les lignes HTML pour la liste des projets
       </td>
 
       <td>{end}</td>
+
+      <td>
+        {pers_assigneed_to_project(number)}
+      </td>
 
       <td style="text-align:center;">
         <!-- MODIFIER -->
