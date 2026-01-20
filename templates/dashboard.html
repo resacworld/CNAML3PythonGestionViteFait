@@ -96,6 +96,38 @@
     }
     .progress-bar.success { background:var(--success); }
     .progress-bar.warning { background:var(--warning); }
+    .project-details summary {
+        list-style: none;
+        cursor: pointer;
+        }
+
+        .project-details summary::-webkit-details-marker {
+        display: none;
+        }
+
+        .project-details[open] summary {
+        background: #f8faff;
+        }
+
+        .tasks-box {
+        padding: 1rem 1.5rem;
+        background: #f9fafb;
+        border-top: 1px solid var(--gray-200);
+        }
+
+        .tasks-box table {
+        width: 100%;
+        font-size: 0.9rem;
+        }
+
+        .tasks-box th {
+        background: var(--gray-100);
+        }
+
+        .tasks-box td {
+        padding: 0.6rem;
+        }
+
   </style>
 </head>
 <body>

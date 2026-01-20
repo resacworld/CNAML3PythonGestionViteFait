@@ -2,6 +2,7 @@ import sqlite3                                                      # Gestion de
 import re                                                           # Module pour les expressions régulières    
 from datetime import datetime                                       # Expressions regulières pour validation
 from db import fetch_all, insert, update, search_all, init_db, fetch_by_id       # Fonction de gestion de la BDD Base de données 
+import db
 
 init_db()
 
@@ -294,33 +295,38 @@ def render_projects_rows(): # Génère les lignes HTML pour la liste des projets
         priority = p[7] # Critique, haute, moyenne, basse
 
         rows.append(f"""
-    <tr>
-      <td style="font-weight:600;">{number}</td>
+<tr>
+  <td colspan="7" style="padding:0;">
+    <details class="project-details">
+      <summary>
+        <table style="width:100%; border-collapse:collapse;">
+          <tr>
+            <td style="font-weight:600;">{number}</td>
 
-      <td>
-        <strong>{title}</strong><br>
-        <small style="color:#6b7280;">{desc}</small>
-      </td>
+            <td>
+              <strong>{title}</strong><br>
+              <small style="color:#6b7280;">{desc}</small>
+            </td>
 
-      <td>
-        <span class="badge status-{status.lower().replace(' ', '-')}">
-          {status}
-        </span>
-      </td>
+            <td>
+              <span class="badge status-{status.lower().replace(' ', '-')}">
+                {status}
+              </span>
+            </td>
 
-      <td>
-        <div class="progress">
-          <div class="progress-bar" style="width:{advance}%;">
-            {advance}%
-          </div>
-        </div>
-      </td>
+            <td>
+              <div class="progress">
+                <div class="progress-bar" style="width:{advance}%;">
+                  {advance}%
+                </div>
+              </div>
+            </td>
 
-      <td>
-        <span class="badge priority-{priority.lower().replace(' ', '-')}">
-          {priority}
-        </span>
-      </td>
+            <td>
+              <span class="badge priority-{priority.lower()}">
+                {priority}
+              </span>
+            </td>
 
       <td>{end}</td>
 
@@ -328,30 +334,56 @@ def render_projects_rows(): # Génère les lignes HTML pour la liste des projets
         {pers_assigneed_to_project(number)}
       </td>
 
-      <td style="text-align:center;">
-        <!-- MODIFIER -->
-        <a href="/projects/edit/{number}"
-          title="Modifier"
-          style="color:#2563eb; margin-right:12px;">
-          <i class="fas fa-pen"></i>
-        </a>
+            <td style="text-align:center;">
+              <a href="/projects/edit/{number}">✏️</a>
+            </td>
+          </tr>
+        </table>
+      </summary>
 
-        <!-- SUPPRIMER -->
-        <form method="POST"
-              action="/projects/delete/{number}"
-              style="display:inline;"
-              onsubmit="return confirm('Supprimer ce projet ?');">
-          <button type="submit"
-                  style="background:none; border:none; color:#ef4444; cursor:pointer;">
-            <i class="fas fa-trash"></i>
-          </button>
-        </form>
-      </td>
-    </tr>
-  """)
+      <!-- 🔽 TÂCHES DU PROJET -->
+      <div class="tasks-box">
+        {render_tasks(number)}
+      </div>
 
-
+    </details>
+  </td>
+</tr>
+""")
     return "\n".join(rows), len(projects)
+
+def render_tasks(project_id):
+    tasks = db.fetch_tasks_for_project(project_id)
+
+    if not tasks:
+        return "<em>Aucune tâche liée à ce projet</em>"
+
+    rows = ""
+    for t in tasks:
+        rows += f"""
+        <tr>
+          <td>{t[0]}</td>
+          <td>{t[1]}</td>
+          <td>{t[2]}</td>
+          <td>{t[3]}</td>
+        </tr>
+        """
+
+    return f"""
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tâche</th>
+          <th>Statut</th>
+          <th>Date limite</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows}
+      </tbody>
+    </table>
+    """
 
 def render_user_rows():
     users = fetch_all("USERS")
@@ -383,7 +415,10 @@ def render_user_rows():
         """) 
     return "\n".join(rows)
 
-def page_html(mode="main", project=None): # Génère la page HTML du tableau de bord 
+
+
+
+def page_html(mode="main", project=None):
     html = open("templates/dashboard.html").read()
 
     if mode == "edit" and project:
@@ -408,6 +443,7 @@ def page_html(mode="main", project=None): # Génère la page HTML du tableau de 
             .replace("{{STATUS_A_FAIRE}}", "selected" if project["status"] == "A faire" else "")
 
     else:
+        # Creation des champs vides pour un nouveau projet
         html = html \
           .replace("{{FORM_ACTION}}", "/projects/create") \
           .replace("{{TITLE}}", "") \

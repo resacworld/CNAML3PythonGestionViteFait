@@ -12,39 +12,38 @@ def root():
 
 # ================= LISTING =================
 
-@app.get("/projects")
+@app.get("/projects") # Route pour obtenir la liste des projets
 def projects():
     return RG.mesProjects()
 
-@app.get("/tasks")
+@app.get("/tasks") # Route pour obtenir la liste des Tâches
 def tasks():
-    print("/tascks called")
     return RG.mesTasks()
 
-@app.get("/users")
+@app.get("/users") # Route pour obtenir la liste des Utilisateurs
 def users():
     return RG.mesUsers()
 
-@app.get("/roles")
+@app.get("/roles") # Route pour obtenir la liste des Rôles
 def roles():
     return RG.mesRoles()
 
-@app.get("/grants")
+@app.get("/grants") # Route pour obtenir la liste des Droits
 def grants():
     return RG.mesGrants()
 
-@app.get("/alloc")
+@app.get("/alloc") # Route pour obtenir la liste des Allocations
 def alloc():
     return RG.mesAlloc()
 
-@app.get("/depend")
+@app.get("/depend") # Route pour obtenir la liste des Dépendances
 def depend():
     return RG.mesDepend()
 
 
 # ================= CREATE =================
 
-@app.post("/projects/create")
+@app.post("/projects/create") # Route pour créer un nouveau projet 
 async def create_project(request: Request):
     data = dict(await request.form())
     # if RG.saveProject(data):
@@ -52,7 +51,7 @@ async def create_project(request: Request):
     return RedirectResponse("/", status_code=303)
 
 
-@app.post("/tasks/create")
+@app.post("/tasks/create") # Route pour créer une nouvelle tâche 
 async def create_task(request: Request):
     data = dict(await request.form())
     if RG.saveTask(data):
@@ -60,7 +59,7 @@ async def create_task(request: Request):
     return RedirectResponse("/", status_code=303)
 
 
-@app.post("/users/create")
+@app.post("/users/create") # Route pour créer un nouvelle utilisateur 
 async def create_user(request: Request):
     data = dict(await request.form())
     if RG.saveUser(data):
@@ -68,7 +67,7 @@ async def create_user(request: Request):
     return RedirectResponse("/", status_code=303)
 
 
-@app.post("/roles/create")
+@app.post("/roles/create") # Route pour créer un nouveau rôle
 async def create_role(request: Request):
     data = dict(await request.form())
     if RG.saveRole(data):
@@ -76,7 +75,7 @@ async def create_role(request: Request):
     return RedirectResponse("/", status_code=303)
 
 
-@app.post("/grants/create")
+@app.post("/grants/create") # Route pour créer un nouveau grants
 async def create_grant(request: Request):
     data = dict(await request.form())
     if RG.saveGrant(data):
@@ -84,7 +83,7 @@ async def create_grant(request: Request):
     return RedirectResponse("/", status_code=303)
 
 
-@app.post("/alloc/create")
+@app.post("/alloc/create") # Route pour Créer une nouvelle alloc
 async def create_alloc(request: Request):
     data = dict(await request.form())
     if RG.saveAlloc(data):
@@ -92,7 +91,7 @@ async def create_alloc(request: Request):
     return RedirectResponse("/", status_code=303)
 
 
-@app.post("/depend/create")
+@app.post("/depend/create") # route pour créer une nouvelle dépendance 
 async def create_depend(request: Request):
     data = dict(await request.form())
     if RG.saveDepend(data):
@@ -102,7 +101,7 @@ async def create_depend(request: Request):
 
 # ================= EDIT SPECIFIQUE (HTML) =================
 
-@app.get("/projects/edit/{project_id}", response_class=HTMLResponse)
+@app.get("/projects/edit/{project_id}", response_class=HTMLResponse) # Route pour éditer un projet spécifique *
 def edit_project(project_id: int):
     # Récupérer le projet depuis la DB
     projects = db.fetch_all("PROJECTS")
@@ -129,7 +128,7 @@ def edit_project(project_id: int):
 
 # ================= UPDATE SPECIFIQUE (HTML) =================
 
-@app.post("/projects/update/{project_id}")
+@app.post("/projects/update/{project_id}") # Route pour mettre à jour un projet spécifique
 async def update_project(project_id: int, request: Request):
     data = dict(await request.form())
 
@@ -156,7 +155,7 @@ async def update_project(project_id: int, request: Request):
 #     return RG.updateGeneric(params)
 
 
-@app.post("/tasks/update")
+@app.post("/tasks/update") # Route pour mettre à jour une tâche spécifique
 async def update_task(request: Request):
     data = dict(await request.form())
 
@@ -167,12 +166,12 @@ async def update_task(request: Request):
         if v:
             params[k] = v
 
-    return RG.updateGeneric(params)
+    return RG.updateGeneric(params) # utilisation de la fonction générique 
 
 
 # ================= UPDATE GENERIQUE =================
 
-@app.get("/update")
+@app.get("/update") # Route pour la mise à jour générique
 def update(request: Request):
     params = dict(request.query_params)
     return RG.updateGeneric(params)
@@ -180,38 +179,38 @@ def update(request: Request):
 
 # ================= SEARCH GENERIQUE =================
 
-@app.get("/search/{query}")
+@app.get("/search/{query}") # Route pour la recherche générique 
 def search(query: str):
     return RG.searchGeneric(query)
 
 # ================= DELETE SPECIFIQUE (DB) =================
 
-@app.post("/projects/delete/{project_id}")
+@app.post("/projects/delete/{project_id}") # Route pout supprimer un projet spécifique
 def delete_project(project_id: int):
     db.delete_project_db(project_id)
     return RedirectResponse("/", status_code=303)
 
-@app.post("/tasks/delete/{task_id}")
+@app.post("/tasks/delete/{task_id}") # route pour supprimer une tâche spécifique
 def delete_task(task_id: int):
     db.delete_task_db(task_id)
     return RedirectResponse("/", status_code=303)
 
-@app.post("/users/delete/{user_id}")
+@app.post("/users/delete/{user_id}") # route pour supprimer un utilisateur spécifique
 def delete_user(user_id: int):
     db.delete_user_db(user_id)
     return RedirectResponse("/", status_code=303)
 
-@app.post("/roles/delete/{role_id}")
+@app.post("/roles/delete/{role_id}") # route pour supprimer un rôle spécifique
 def delete_role(role_id: int):
     db.delete_role_db(role_id)
     return RedirectResponse("/", status_code=303)
 
-@app.post("/grants/delete/{grant_id}")
+@app.post("/grants/delete/{grant_id}") # route pour supprimer un droit spécifique
 def delete_grant(grant_id: int):
     db.delete_grant_db(grant_id)
     return RedirectResponse("/", status_code=303)
 
-@app.post("/alloc/delete/{alloc_id}")
+@app.post("/alloc/delete/{alloc_id}") # route pour supprimer une alloc spécifique 
 def delete_alloc(alloc_id: int):
     db.delete_alloc_db(alloc_id)
     return RedirectResponse("/", status_code=303)

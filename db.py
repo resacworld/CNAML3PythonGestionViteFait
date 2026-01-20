@@ -7,10 +7,13 @@ def get_connection():
     return sqlite3.connect(DB_NAME)
 
 
-def init_db():
+def init_db(): # Initialisation de la base de données et création des tables si elles n'existent pas 
     conn = get_connection()
     c = conn.cursor()
 
+    # ===== Création des tables =====
+
+    # Table PROJECTS
     c.execute("""
     CREATE TABLE IF NOT EXISTS PROJECTS (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,6 +27,7 @@ def init_db():
     )
     """)
 
+    # Table TASKS
     c.execute("""
     CREATE TABLE IF NOT EXISTS TASKS (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,6 +42,7 @@ def init_db():
     )
     """)
 
+    # Table USERS
     c.execute("""
     CREATE TABLE IF NOT EXISTS USERS (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,6 +52,7 @@ def init_db():
     )
     """)
 
+    # Table ROLES
     c.execute("""
     CREATE TABLE IF NOT EXISTS ROLES (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,6 +60,7 @@ def init_db():
     )
     """)
 
+    # Table GRANTS
     c.execute("""
     CREATE TABLE IF NOT EXISTS GRANTS (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,6 +70,7 @@ def init_db():
     )
     """)
 
+    # Table ALLOC
     c.execute("""
     CREATE TABLE IF NOT EXISTS ALLOC (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,6 +79,7 @@ def init_db():
     )
     """)
 
+    # Table DEPEND
     c.execute("""
     CREATE TABLE IF NOT EXISTS DEPEND (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -83,13 +92,26 @@ def init_db():
     conn.close()
 
 
-def fetch_all(table):
+def fetch_all(table): # Récupère toutes les entrées d'une table donnée
     conn = get_connection()
     c = conn.cursor()
     c.execute(f"SELECT * FROM {table}")
     rows = c.fetchall()
     conn.close()
     return rows
+
+def fetch_tasks_for_project(project_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT id, title, status, due_date
+        FROM TASKS
+        WHERE project = ?
+    """, (project_id,))
+    rows = c.fetchall()
+    conn.close()
+    return rows
+
 
 def fetch_by_id(table, record_id):
     conn = get_connection()
@@ -99,7 +121,7 @@ def fetch_by_id(table, record_id):
     conn.close()
     return row
 
-def insert(table, data: dict):
+def insert(table, data: dict): # Insère une nouvelle entrée dans une table donnée
     conn = get_connection()
     c = conn.cursor()
 
@@ -114,7 +136,7 @@ def insert(table, data: dict):
     conn.close()
 
 
-def update(table, record_id, data: dict):
+def update(table, record_id, data: dict): # Met à jour une entrée existante dans une table donnée
     conn = get_connection()
     c = conn.cursor()
 
@@ -129,7 +151,7 @@ def update(table, record_id, data: dict):
     conn.close()
 
 
-def search_all(keyword):
+def search_all(keyword): # Recherche générique dans toutes les tables et colonnes
     conn = get_connection()
     c = conn.cursor()
 
@@ -150,7 +172,7 @@ def search_all(keyword):
     return results
 
 
-def delete_project_db(project_id):
+def delete_project_db(project_id): # Supprime un projet de la base de données
     conn = get_connection()
     c = conn.cursor()
     c.execute("DELETE FROM PROJECTS WHERE id=?", (project_id,))
@@ -158,7 +180,7 @@ def delete_project_db(project_id):
     conn.close()
 
 
-def getProjectById(project_id):
+def getProjectById(project_id): # Récupère un projet par son ID
     """
     Retourne un projet sous forme de dictionnaire :
     {
@@ -203,35 +225,35 @@ def getProjectById(project_id):
 
     return project_dict
 
-def delete_task_db(task_id):
+def delete_task_db(task_id): # Supprime une tâche de la base de données
     conn = get_connection()
     c = conn.cursor()
     c.execute("DELETE FROM TASKS WHERE id=?", (task_id,))
     conn.commit()
     conn.close()
 
-def delete_user_db(user_id):
+def delete_user_db(user_id): # Supprime un utilisateur de la base de données
     conn = get_connection()
     c = conn.cursor()
     c.execute("DELETE FROM USERS WHERE id=?", (user_id,))
     conn.commit()
     conn.close()
 
-def delete_role_db(role_id):
+def delete_role_db(role_id): # Supprime un rôle de la base de données
     conn = get_connection()
     c = conn.cursor()
     c.execute("DELETE FROM ROLES WHERE id=?", (role_id,))
     conn.commit()
     conn.close()
 
-def delete_grant_db(grant_id):
+def delete_grant_db(grant_id): # Supprime un droit de la base de données
     conn = get_connection()
     c = conn.cursor()
     c.execute("DELETE FROM GRANTS WHERE id=?", (grant_id,))
     conn.commit()
     conn.close()
 
-def delete_alloc_db(alloc_id):
+def delete_alloc_db(alloc_id): # Supprime une alloc de la base de données
     conn = get_connection()
     c = conn.cursor()
     c.execute("DELETE FROM ALLOC WHERE id=?", (alloc_id,))
