@@ -48,7 +48,7 @@ def depend():
 async def create_project(request: Request):
     data = dict(await request.form())
     # if RG.saveProject(data):
-    insert("PROJECTS", data)
+    db.insert("PROJECTS", data)
     return RedirectResponse("/", status_code=303)
 
 
@@ -56,7 +56,7 @@ async def create_project(request: Request):
 async def create_task(request: Request):
     data = dict(await request.form())
     if RG.saveTask(data):
-        insert("TASKS", data)
+        db.insert("TASKS", data)
     return RedirectResponse("/", status_code=303)
 
 
@@ -64,7 +64,7 @@ async def create_task(request: Request):
 async def create_user(request: Request):
     data = dict(await request.form())
     if RG.saveUser(data):
-        insert("USERS", data)
+        db.insert("USERS", data)
     return RedirectResponse("/", status_code=303)
 
 
@@ -72,7 +72,7 @@ async def create_user(request: Request):
 async def create_role(request: Request):
     data = dict(await request.form())
     if RG.saveRole(data):
-        insert("ROLES", data)
+        db.insert("ROLES", data)
     return RedirectResponse("/", status_code=303)
 
 
@@ -80,7 +80,7 @@ async def create_role(request: Request):
 async def create_grant(request: Request):
     data = dict(await request.form())
     if RG.saveGrant(data):
-        insert("GRANTS", data)
+        db.insert("GRANTS", data)
     return RedirectResponse("/", status_code=303)
 
 
@@ -88,7 +88,7 @@ async def create_grant(request: Request):
 async def create_alloc(request: Request):
     data = dict(await request.form())
     if RG.saveAlloc(data):
-        insert("ALLOC", data)
+        db.insert("ALLOC", data)
     return RedirectResponse("/", status_code=303)
 
 
@@ -96,7 +96,7 @@ async def create_alloc(request: Request):
 async def create_depend(request: Request):
     data = dict(await request.form())
     if RG.saveDepend(data):
-        insert("DEPEND", data)
+        db.insert("DEPEND", data)
     return RedirectResponse("/", status_code=303)
 
 
@@ -125,12 +125,6 @@ def edit_project(project_id: int):
 
     # Générer la page HTML
     return RG.page_html(mode="edit", project=project)
-
-
-@app.post("/projects/delete/{project_id}")
-def delete_project(project_id: int):
-    db.delete_project_db(project_id)
-    return RedirectResponse("/", status_code=303)
 
 
 # ================= UPDATE SPECIFIQUE (HTML) =================

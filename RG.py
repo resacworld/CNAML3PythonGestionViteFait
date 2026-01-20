@@ -351,8 +351,9 @@ def page_html(mode="main", project=None):
             .replace("{{STATUS_EN_COURS}}", "selected" if project["status"] == "En cours" else "") \
             .replace("{{STATUS_TERMINE}}", "selected" if project["status"] == "Terminé" else "") \
             .replace("{{STATUS_EN_ATTENTE}}", "selected" if project["status"] == "En attente" else "") \
-            .replace("{{STATUS_BLOQUE}}", "selected" if project["status"] == "Bloqué" else "")
-        
+            .replace("{{STATUS_BLOQUE}}", "selected" if project["status"] == "Bloqué" else "") \
+            .replace("{{STATUS_A_FAIRE}}", "selected" if project["status"] == "A faire" else "")
+
     else:
         html = html \
           .replace("{{FORM_ACTION}}", "/projects/create") \
