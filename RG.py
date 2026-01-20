@@ -77,13 +77,13 @@ def verifier_projet(data):
         return False
 
     # 5. Vérification de la priorité (1 à 5)
-    #if not (1 <= int(priority) <= 5):
-    #    return False
+    if not str(priority) in ["Critique", "Haute", "Moyenne", "Basse"]:
+       return False
 
     # 6. Vérification du statut (liste autorisée)
-    #statuts_valides = ["À faire", "En cours", "Terminé", "En pause"]
-    #if status not in statuts_valides:
-    #    return False
+    statuts_valides = ["A faire", "En cours", "Terminé", "En attente", "Bloqué"]
+    if status not in statuts_valides:
+       return False
 
     return True
 
