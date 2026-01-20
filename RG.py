@@ -333,18 +333,53 @@ def render_projects_rows():
     return "\n".join(rows), len(projects)
 
 
+def page_html(mode="main", project=None):
+    html = open("templates/dashboard.html").read()
 
-def page_html():
-    with open("templates/dashboard.html", "r", encoding="utf-8") as f:
-        html = f.read()
+    if mode == "edit" and project:
+        # Remplacer les placeholders par les valeurs du projet
+        html = html \
+            .replace("{{FORM_ACTION}}", f"/projects/update/{project['id']}") \
+            .replace("{{TITLE}}", project['title']) \
+            .replace("{{DESCRIPTION}}", project['description']) \
+            .replace("{{BEGIN}}", project['begin'] or "") \
+            .replace("{{END}}", project['end'] or "") \
+            .replace("{{ADVANCE}}", str(project['advance'])) \
+            .replace("{{STATUS}}", project['status']) \
+            .replace("{{PRIORITY}}", project['priority']) \
+            .replace("{{PRIORITY_CRITIQUE}}", "selected" if project["priority"] == "Critique" else "") \
+            .replace("{{PRIORITY_HAUTE}}", "selected" if project["priority"] == "Haute" else "") \
+            .replace("{{PRIORITY_MOYENNE}}", "selected" if project["priority"] == "Moyenne" else "") \
+            .replace("{{PRIORITY_BASSE}}", "selected" if project["priority"] == "Basse" else "") \
+            .replace("{{STATUS_EN_COURS}}", "selected" if project["status"] == "En cours" else "") \
+            .replace("{{STATUS_TERMINE}}", "selected" if project["status"] == "Terminé" else "") \
+            .replace("{{STATUS_EN_ATTENTE}}", "selected" if project["status"] == "En attente" else "") \
+            .replace("{{STATUS_BLOQUE}}", "selected" if project["status"] == "Bloqué" else "")
+        
+    else:
+        html = html \
+          .replace("{{FORM_ACTION}}", "/projects/create") \
+          .replace("{{TITLE}}", "") \
+          .replace("{{DESCRIPTION}}", "") \
+          .replace("{{BEGIN}}", "") \
+          .replace("{{END}}", "") \
+          .replace("{{ADVANCE}}", "") \
+          .replace("{{STATUS}}", "") \
+          .replace("{{PRIORITY}}", "") \
+          .replace("{{PRIORITY_CRITIQUE}}", "") \
+          .replace("{{PRIORITY_HAUTE}}", "") \
+          .replace("{{PRIORITY_MOYENNE}}", "") \
+          .replace("{{PRIORITY_BASSE}}", "") \
+          .replace("{{ADVANCE}}", str(0)) 
+          
 
     project_rows, count = render_projects_rows()
-
     html = html.replace("{{PROJECT_ROWS}}", project_rows)
     html = html.replace("{{PROJECT_COUNT}}", str(count))
 
     return html
-    
+
+
 def page_html_old():
     return'''
 <!DOCTYPE html>
