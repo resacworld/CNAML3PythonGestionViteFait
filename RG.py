@@ -1,5 +1,6 @@
 import sqlite3
 import re
+from datetime import datetime
 from db import fetch_all, insert, update, search_all, init_db
 
 init_db()
@@ -53,7 +54,6 @@ def verifier_user(data):
 def verifier_projet(data):
     
     title, description, begin, end, advance, status, priority = data.get("title"), data.get("description"), data.get("begin"), data.get("end"), data.get("advance"), data.get("status"), data.get("priority")
-    print(title, description, begin, end, advance, status, priority)
 
     # 1. Nettoyage des textes
     title = title.strip() if title else ""
@@ -67,8 +67,12 @@ def verifier_projet(data):
     date_pattern = r"^\d{4}-\d{2}-\d{2}$"
     if not re.match(date_pattern, str(begin)) or not re.match(date_pattern, str(end)):
         return False
+    
+    # 4. Vérification de si la date de début est antérieure à la date de fin
+    if datetime.strptime(str(begin), "%Y-%m-%d") > datetime.strptime(str(end), "%Y-%m-%d"):
+        return False
 
-    # 4. Vérification de la progression (0 à 100)
+    # Vérification de la progression (0 à 100)
     if not (0 <= int(advance) <= 100):
         return False
 
@@ -80,36 +84,36 @@ def verifier_projet(data):
     #statuts_valides = ["À faire", "En cours", "Terminé", "En pause"]
     #if status not in statuts_valides:
     #    return False
-    print("vrai")
+
     return True
 
 def verifier_task(data):
 
     project, title, description, due_date, status, estimated, done, emergency = data.get("project"), data.get("title"), data.get("description"), data.get("due_date"), data.get("status"), data.get("estimated"), data.get("done"), data.get("emergency")
     print(project, title, description, due_date, status, estimated, done, emergency)
-    # 1. Nettoyage et vérification des champs obligatoires
+    # Nettoyage et vérification des champs obligatoires
     title = title.strip() if title else ""
     description = description.strip() if description else ""
     
     if not title or not description or project is None:
         return False
 
-    # 2. Vérification du format de la date (AAAA-MM-JJ)
+    # Vérification du format de la date (AAAA-MM-JJ)
     if not re.match(r"^\d{4}-\d{2}-\d{2}$", str(due_date)):
         return False
 
-    # 3. Vérification des nombres (doivent être positifs)
+    # Vérification des nombres (doivent être positifs)
     # try:
     #     if int(estimated) < 0 or int(done) < 0:
     #         return False
     # except (ValueError, TypeError):
     #     return False
 
-    # 4. Vérification de l'urgence (1 à 5)
+    # Vérification de l'urgence (1 à 5)
     #if not (1 <= int(emergency) <= 5):
     #    return False
 
-    # 5. Vérification du statut
+    # Vérification du statut
     #if status not in ["À faire", "En cours", "Terminé"]:
     #    return False
 
