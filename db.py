@@ -91,6 +91,19 @@ def fetch_all(table):
     conn.close()
     return rows
 
+def fetch_tasks_for_project(project_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT id, title, status, due_date
+        FROM TASKS
+        WHERE project = ?
+    """, (project_id,))
+    rows = c.fetchall()
+    conn.close()
+    return rows
+
+
 
 def insert(table, data: dict):
     conn = get_connection()
