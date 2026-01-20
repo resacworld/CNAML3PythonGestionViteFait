@@ -214,7 +214,11 @@
         <div id="create-task" class="tab-content active">
           <form method="POST" action="/tasks/create">
             <div class="form-row">
-              <div><label>ID Projet</label><input type="text" name="project" required></div>
+              <div><label>Projet</label>
+                <select name="project" required>
+                  <option value="">Aucune</option>
+                  {{PROJECT_OPTIONS}}
+                </select></div>
               <div><label>Titre</label><input type="text" name="title" value="{{TITLE}}" required></div>
             </div>
             <label>Description</label><textarea name="description" rows="2"></textarea>
@@ -263,16 +267,40 @@
       <div class="card-body">
         <form method="POST" action="/grants/create" style="margin-bottom:1rem;">
           <div class="form-row">
-            <div><label>ID Projet</label><input type="text" name="project" required></div>
-            <div><label>ID User</label><input type="text" name="user" required></div>
-            <div><label>ID Rôle</label><input type="text" name="role" required></div>
+            <div><label>Projet</label>
+              <select name="project" required>
+                <option value="">Aucune</option>
+                {{PROJECT_OPTIONS}}
+              </select>
+            </div>
+            <div><label>User</label>
+              <select name="user" required>
+                <option value="">Aucune</option>
+                {{USER_OPTIONS}}
+              </select>
+            </div>
+            <div><label>Rôle</label>
+              <select name="role" required>
+                <option value="">Aucune</option>
+                {{ROLE_OPTIONS}}
+              </select>
+            </div>
           </div>
           <button type="submit">Accorder rôle</button>
         </form>
         <form method="POST" action="/alloc/create">
           <div class="form-row">
-            <div><label>ID Tâche</label><input type="text" name="task" required></div>
-            <div><label>ID Utilisateur</label><input type="text" name="user" required></div>
+            <div><label>Tâche</label>
+              <select name="task" required>
+                <option value="">Aucune</option>
+                {{TASK_OPTIONS}}
+              </select>
+            </div>
+            <div><label>Utilisateur</label>
+              <select name="user" required>
+                <option value="">Aucune</option>
+                {{USER_OPTIONS}}
+              </select></div>
           </div>
           <button type="submit">Allouer tâche</button>
         </form>
@@ -285,8 +313,18 @@
       <div class="card-body">
         <form method="POST" action="/depend/create">
           <div class="form-row">
-            <div><label>Tâche source</label><input type="text" name="task_from" required placeholder="ID tâche A"></div>
-            <div><label>Tâche dépendante</label><input type="text" name="task_to" required placeholder="ID tâche B"></div>
+            <div><label>Tâche source</label>
+              <select name="task_from" required>
+                <option value="">Aucune</option>
+                {{TASK_OPTIONS}}
+              </select>
+            </div>
+            <div><label>Tâche dépendante</label>
+              <select name="task_to" required>
+                <option value="">Aucune</option>
+                {{TASK_OPTIONS}}
+              </select>
+            </div>
           </div>
           <button type="submit">Enregistrer la dépendance</button>
         </form>
@@ -322,6 +360,28 @@
         </div>
         <div style="padding:1rem; text-align:center; color:#6b7280; font-size:0.9rem; border-top:1px solid var(--gray-200);">
           <span id="projectCount">{{PROJECT_COUNT}}</span> projet(s) • Dernière mise à jour : <span id="lastUpdate">à l'instant</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des utilisateurs -->
+    <div>
+      <div class="card-header">Liste des utilisateurs</div>
+      <div class="card-body" style="padding:0;">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody id="usersList">
+                {{USER_ROWS}}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

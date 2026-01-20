@@ -1,13 +1,13 @@
-import sqlite3
+import sqlite3 # Gestion de la base de données SQLite
 
-def create_tables():
+def create_tables(): # Fonction pour créer les tables dans la base de données SQLite
     try:
-        conn = sqlite3.connect('database.db')
+        conn = sqlite3.connect('database.db') # connexion à la base de données Sqlite (database.db)
     except sqlite3.Error as e:
         print(e)
         return False
 
-    c = conn.cursor()
+    c = conn.cursor() # Créer un curseur pour executer les commandes SQL
 
     # TABLE PROJECTS
     c.execute('''
@@ -92,6 +92,6 @@ def create_tables():
         )
     ''')
 
-    conn.commit()
-    conn.close()
-    return True
+    conn.commit() # Enregistrer les modifications
+    conn.close() # Fermer la connexion
+    return True # Retourner True si la création des tables a réussi
