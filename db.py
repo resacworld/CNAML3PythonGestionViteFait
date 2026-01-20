@@ -150,6 +150,52 @@ def delete_project_db(project_id):
     conn.commit()
     conn.close()
 
+
+def getProjectById(project_id):
+    """
+    Retourne un projet sous forme de dictionnaire :
+    {
+      "title": "...",
+      "description": "...",
+      "begin": "...",
+      "end": "...",
+      "advance": 50,
+      "status": "...",
+      "priority": "..."
+    }
+    """
+    try:
+        project_id = int(project_id)
+    except (ValueError, TypeError):
+        return None
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT title, description, begin, end, advance, status, priority
+        FROM PROJECTS
+        WHERE id = ?
+    """, (project_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+
+    project_dict = {
+        "title": row[0],
+        "description": row[1],
+        "begin": row[2],
+        "end": row[3],
+        "advance": row[4],
+        "status": row[5],
+        "priority": row[6]
+    }
+
+    return project_dict
+
 def delete_task_db(task_id):
     conn = get_connection()
     c = conn.cursor()

@@ -330,90 +330,125 @@ def render_projects_rows(): # Génère les lignes HTML pour la liste des projets
     return "\n".join(rows), len(projects)
 
 
+def page_html(mode="main", project=None):
+    html = open("templates/dashboard.html").read()
 
-def page_html(): # Génère le code HTML de la page du tableau de bord 
-    with open("templates/dashboard.html", "r", encoding="utf-8") as f:
-        html = f.read()
+    if mode == "edit" and project:
+        # Remplacer les placeholders par les valeurs du projet
+        html = html \
+            .replace("{{FORM_ACTION}}", f"/projects/update/{project['id']}") \
+            .replace("{{TITLE}}", project['title']) \
+            .replace("{{DESCRIPTION}}", project['description']) \
+            .replace("{{BEGIN}}", project['begin'] or "") \
+            .replace("{{END}}", project['end'] or "") \
+            .replace("{{ADVANCE}}", str(project['advance'])) \
+            .replace("{{STATUS}}", project['status']) \
+            .replace("{{PRIORITY}}", project['priority']) \
+            .replace("{{PRIORITY_CRITIQUE}}", "selected" if project["priority"] == "Critique" else "") \
+            .replace("{{PRIORITY_HAUTE}}", "selected" if project["priority"] == "Haute" else "") \
+            .replace("{{PRIORITY_MOYENNE}}", "selected" if project["priority"] == "Moyenne" else "") \
+            .replace("{{PRIORITY_BASSE}}", "selected" if project["priority"] == "Basse" else "") \
+            .replace("{{STATUS_EN_COURS}}", "selected" if project["status"] == "En cours" else "") \
+            .replace("{{STATUS_TERMINE}}", "selected" if project["status"] == "Terminé" else "") \
+            .replace("{{STATUS_EN_ATTENTE}}", "selected" if project["status"] == "En attente" else "") \
+            .replace("{{STATUS_BLOQUE}}", "selected" if project["status"] == "Bloqué" else "")
+        
+    else:
+        html = html \
+          .replace("{{FORM_ACTION}}", "/projects/create") \
+          .replace("{{TITLE}}", "") \
+          .replace("{{DESCRIPTION}}", "") \
+          .replace("{{BEGIN}}", "") \
+          .replace("{{END}}", "") \
+          .replace("{{ADVANCE}}", "") \
+          .replace("{{STATUS}}", "") \
+          .replace("{{PRIORITY}}", "") \
+          .replace("{{PRIORITY_CRITIQUE}}", "") \
+          .replace("{{PRIORITY_HAUTE}}", "") \
+          .replace("{{PRIORITY_MOYENNE}}", "") \
+          .replace("{{PRIORITY_BASSE}}", "") \
+          .replace("{{ADVANCE}}", str(0)) 
+          
 
     project_rows, count = render_projects_rows()
-
     html = html.replace("{{PROJECT_ROWS}}", project_rows)
     html = html.replace("{{PROJECT_COUNT}}", str(count))
 
     return html
-    
-# def page_html_old():
-#     return'''
-# <!DOCTYPE html>
-# <html lang="fr">
-# <head>
-#   <meta charset="UTF-8" />
-#   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-#   <title>Tableau de Bord - Gestion Projets & Tâches</title>
-#   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-#   <style>
-#     :root {
-#       --primary: #2563eb; --primary-dark: #1d4ed8; --success: #10b981;
-#       --warning: #f59e0b; --danger: #ef4444; --gray-100: #f3f4f6;
-#       --gray-200: #e5e7eb; --gray-600: #4b5563; --gray-800: #1f2937;
-#       --shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-#       --radius: 12px;
-#     }
-#     * { margin:0; padding:0; box-sizing:border-box; }
-#     body {
-#       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-#       background: linear-gradient(135deg, #f0f2f5 0%, #e0e7ff 100%);
-#       color: var(--gray-800);
-#       min-height: 100vh;
-#       padding-top: 80px;
-#     }
-#     header {
-#       position: fixed; top:0; left:0; right:0; background:white;
-#       padding:1rem 2rem; box-shadow:0 4px 20px rgba(0,0,0,0.08); z-index:1000;
-#       display:flex; align-items:center; justify-content:space-between;
-#     }
-#     header h1 { font-size:1.6rem; color:var(--primary); font-weight:700; }
-#     .container { max-width:1450px; margin:0 auto; padding:2rem; }
-#     .dashboard-grid {
-#       display:grid;
-#       grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-#       gap:1.8rem;
-#       margin-top:2rem;
-#     }
-#     .card {
-#       background:white; border-radius:var(--radius);
-#       box-shadow:var(--shadow); overflow:hidden;
-#       transition:transform .3s, box-shadow .3s;
-#     }
-#     .card:hover { transform:translateY(-8px); box-shadow:0 20px 35px -10px rgba(0,0,0,0.15); }
-#     .card-header {
-#       background:var(--primary); color:white; padding:1rem 1.5rem;
-#       font-weight:600; font-size:1.1rem; display:flex; align-items:center; gap:0.7rem;
-#     }
-#     .card-body { padding:1.5rem; }
-#     .tabs { display:flex; background:var(--gray-100); border-radius:8px; overflow:hidden; margin-bottom:1.5rem; }
-#     .tab { flex:1; padding:0.8rem; text-align:center; background:transparent; border:none; font-weight:600; cursor:pointer; transition:.3s; }
-#     .tab.active { background:var(--primary); color:white; }
-#     .tab-content { display:none; }
-#     .tab-content.active { display:block; }
-#     form { display:grid; gap:1rem; }
-#     .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-#     @media (max-width:640px) { .form-row { grid-template-columns:1fr; } }
-#     label { font-weight:600; color:var(--gray-800); font-size:0.95rem; margin-bottom:0.4rem; display:block; }
-#     input, textarea, select {
-#       width:100%; padding:0.75rem 1rem; border:2px solid var(--gray-200);
-#       border-radius:8px; font-size:1rem; transition:.2s;
-#     }
-#     input:focus, textarea:focus, select:focus {
-#       outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(37,99,235,0.15);
-#     }
-#     button {
-#       background:var(--primary); color:white; border:none; padding:0.8rem 1.6rem;
-#       border-radius:8px; font-weight:600; cursor:pointer; transition:.3s;
-#       display:inline-flex; align-items:center; gap:0.5rem;
-#     }
-#     button:hover { background:var(--primary-dark); transform:translateY(-2px); }
-#     small { color:var(--gray-600); font-size:0.85rem; margin-top:1rem; display:block; }
+
+
+def page_html_old():
+    return'''
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tableau de Bord - Gestion Projets & Tâches</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #2563eb; --primary-dark: #1d4ed8; --success: #10b981;
+      --warning: #f59e0b; --danger: #ef4444; --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb; --gray-600: #4b5563; --gray-800: #1f2937;
+      --shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f2f5 0%, #e0e7ff 100%);
+      color: var(--gray-800);
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+    header {
+      position: fixed; top:0; left:0; right:0; background:white;
+      padding:1rem 2rem; box-shadow:0 4px 20px rgba(0,0,0,0.08); z-index:1000;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    header h1 { font-size:1.6rem; color:var(--primary); font-weight:700; }
+    .container { max-width:1450px; margin:0 auto; padding:2rem; }
+    .dashboard-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap:1.8rem;
+      margin-top:2rem;
+    }
+    .card {
+      background:white; border-radius:var(--radius);
+      box-shadow:var(--shadow); overflow:hidden;
+      transition:transform .3s, box-shadow .3s;
+    }
+    .card:hover { transform:translateY(-8px); box-shadow:0 20px 35px -10px rgba(0,0,0,0.15); }
+    .card-header {
+      background:var(--primary); color:white; padding:1rem 1.5rem;
+      font-weight:600; font-size:1.1rem; display:flex; align-items:center; gap:0.7rem;
+    }
+    .card-body { padding:1.5rem; }
+    .tabs { display:flex; background:var(--gray-100); border-radius:8px; overflow:hidden; margin-bottom:1.5rem; }
+    .tab { flex:1; padding:0.8rem; text-align:center; background:transparent; border:none; font-weight:600; cursor:pointer; transition:.3s; }
+    .tab.active { background:var(--primary); color:white; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    form { display:grid; gap:1rem; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media (max-width:640px) { .form-row { grid-template-columns:1fr; } }
+    label { font-weight:600; color:var(--gray-800); font-size:0.95rem; margin-bottom:0.4rem; display:block; }
+    input, textarea, select {
+      width:100%; padding:0.75rem 1rem; border:2px solid var(--gray-200);
+      border-radius:8px; font-size:1rem; transition:.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(37,99,235,0.15);
+    }
+    button {
+      background:var(--primary); color:white; border:none; padding:0.8rem 1.6rem;
+      border-radius:8px; font-weight:600; cursor:pointer; transition:.3s;
+      display:inline-flex; align-items:center; gap:0.5rem;
+    }
+    button:hover { background:var(--primary-dark); transform:translateY(-2px); }
+    small { color:var(--gray-600); font-size:0.85rem; margin-top:1rem; display:block; }
 
 #     /* Table styles */
 #     table { width:100%; border-collapse:collapse; font-size:0.95rem; }
