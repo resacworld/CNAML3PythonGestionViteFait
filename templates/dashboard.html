@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tableau de Bord - Gestion Projets & Tâches</title>
+  <title>{{TITLE}}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     :root {
@@ -115,41 +115,58 @@
     <div class="card">
       <div class="card-header">Gestion des Projets</div>
       <div class="card-body">
-        <div class="tabs">
-          <button class="tab active" onclick="openTab(event,'create-project')">Créer</button>
+        <!-- <div class="tabs"> -->
+          <!-- <button class="tab active" onclick="openTab(event,'create-project')">Enregistrer</button> -->
           <!-- <button class="tab" onclick="openTab(event,'edit-project')">Modifier</button> -->
-        </div>
+        <!-- </div> -->
         <div id="create-project" class="tab-content active">
           <!-- <form method="POST" action="/projects/create"> -->
-          <form method="POST" action="/projects/create">
+          <form method="POST" action="{{FORM_ACTION}}">
 
             <div class="form-row">
-              <div><label>Titre</label><input type="text" name="title" required></div>
-              <div><label>Date début</label><input type="date" name="begin"></div>
+              <div><label>Titre</label><input type="text" name="title" value="{{TITLE}}" required></div>
+              <div><label>Date début</label><input type="date" name="begin" value="{{BEGIN}}" required></div>
             </div>
-            <label>Description</label><textarea name="description" rows="3"></textarea>
+            <label>Description</label><textarea name="description" rows="3">{{DESCRIPTION}}</textarea>
             <div class="form-row">
-              <div><label>Date fin</label><input type="date" name="end"></div>
-              <div><label>Avancement (%)</label><input type="text" name="advance" placeholder="1 à 100"></div>
+              <div><label>Date fin</label><input type="date" name="end" value="{{END}}" required></div>
+              <div><label>Avancement (%)</label><input type="text" name="advance" placeholder="50" value="{{ADVANCE}}" required></div>
             </div>
             <div class="form-row">
-              <div><label>Statut</label><input type="text" name="status" placeholder="En cours"></div>
-              <div><label>Priorité</label><input type="text" name="priority" placeholder="1 à 5"></div>
+                <div>
+                <label>Statut</label>
+                <select name="status" required>
+                    <option value="En cours" {{STATUS_EN_COURS}}>En cours</option>
+                    <option value="Terminé" {{STATUS_TERMINE}}>Terminé</option>
+                    <option value="En attente" {{STATUS_EN_ATTENTE}}>En attente</option>
+                    <option value="Bloqué" {{STATUS_BLOQUE}}>Bloqué</option>
+                </select>
+                </div>
+                <div>
+                <label>Priorité</label>
+                <select name="priority" required>
+                    <option value="">Aucune</option>
+                    <option value="Critique" {{PRIORITY_CRITIQUE}}>Critique</option>
+                    <option value="Haute" {{PRIORITY_HAUTE}}>Haute</option>
+                    <option value="Moyenne" {{PRIORITY_MOYENNE}}>Moyenne</option>
+                    <option value="Basse" {{PRIORITY_BASSE}}>Basse</option>
+                </select>
+                </div>
             </div>
-            <button type="submit">Créer le projet</button>
+            <button type="submit">Enregistrer</button>
           </form>
         </div>
-        <div id="edit-project" class="tab-content">
+        <!-- <div id="edit-project" class="tab-content">
           <form method="POST" action="/projects/update">
             <label>ID Projet</label><input type="text" name="number" required placeholder="123">
             <div class="form-row">
-              <div><label>Nouveau titre</label><input type="text" name="title"></div>
+              <div><label>Nouveau titre</label><input type="text" name="title" value="{{TITLE}}" required>"></div>
               <div><label>Avancement</label><input type="text" name="advance"></div>
             </div>
             <button type="submit">Mettre à jour</button>
           </form>
           <small>Ne remplir que les champs à modifier</small>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -157,25 +174,25 @@
     <div class="card">
       <div class="card-header">Gestion des Tâches</div>
       <div class="card-body">
-        <div class="tabs">
-          <button class="tab active" onclick="openTab(event,'create-task')">Créer</button>
+        <!-- <div class="tabs"> -->
+          <!-- <button class="tab active" onclick="openTab(event,'create-task')">Enregistrer</button> -->
           <!-- <button class="tab" onclick="openTab(event,'edit-task')">Modifier</button> -->
-        </div>
+        <!-- </div> -->
         <div id="create-task" class="tab-content active">
           <form method="POST" action="/tasks/create">
             <div class="form-row">
               <div><label>ID Projet</label><input type="text" name="project" required></div>
-              <div><label>Titre</label><input type="text" name="title" required></div>
+              <div><label>Titre</label><input type="text" name="title" value="{{TITLE}}" required></div>
             </div>
             <label>Description</label><textarea name="description" rows="2"></textarea>
             <div class="form-row">
               <div><label>Date limite</label><input type="date" name="due_date"></div>
               <div><label>Statut</label><input type="text" name="status" placeholder="À faire"></div>
             </div>
-            <button type="submit">Créer la tâche</button>
+            <button type="submit">Enregistrer la tâche</button>
           </form>
         </div>
-        <div id="edit-task" class="tab-content">
+        <!-- <div id="edit-task" class="tab-content">
           <form method="POST" action="/tasks/update">
             <label>ID Tâche</label><input type="text" name="number" required>
             <div class="form-row">
@@ -184,7 +201,7 @@
             </div>
             <button type="submit">Mettre à jour</button>
           </form>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -198,11 +215,11 @@
             <div><label>Prénom</label><input type="text" name="surname" required></div>
           </div>
           <label>Email</label><input type="email" name="mail" required>
-          <button type="submit">Créer utilisateur</button>
+          <button type="submit">Enregistrer l'utilisateur</button>
         </form>
         <form method="POST" action="/roles/create">
           <label>Nouveau rôle</label><input type="text" name="description" placeholder="ex: Chef de projet" required>
-          <button type="submit">Créer rôle</button>
+          <button type="submit">Enregistrer le rôle</button>
         </form>
       </div>
     </div>
@@ -238,7 +255,7 @@
             <div><label>Tâche source</label><input type="text" name="task_from" required placeholder="ID tâche A"></div>
             <div><label>Tâche dépendante</label><input type="text" name="task_to" required placeholder="ID tâche B"></div>
           </div>
-          <button type="submit">Créer dépendance</button>
+          <button type="submit">Enregistrer la dépendance</button>
         </form>
       </div>
     </div>
