@@ -295,7 +295,7 @@ def render_projects_rows(): # Génère les lignes HTML pour la liste des projets
 
         rows.append(f"""
 <tr>
-  <td colspan="7" style="padding:0;">
+  <td colspan="8" style="padding:0;">
     <details class="project-details">
       <summary>
         <table style="width:100%; border-collapse:collapse;">
@@ -361,10 +361,27 @@ def render_tasks(project_id):
     for t in tasks:
         rows += f"""
         <tr>
-          <td>{t[0]}</td>
-          <td>{t[1]}</td>
-          <td>{t[2]}</td>
-          <td>{t[3]}</td>
+            <form action="/tasks/update/{t[0]}" method="POST">
+                <td>{t[0]}</td>
+                <td><input type="text" name="title" value="{t[1]}" onchange="this.form.submit()" required></td>
+                <td>
+                    <select name="status" onchange="this.form.submit()">
+                        <option value="A faire" {"selected" if t[2] == "A faire" else ""}>A faire</option>
+                        <option value="En cours" {"selected" if t[2] == "En cours" else ""}>En cours</option>
+                        <option value="En Attente" {"selected" if t[2] == "En Attente" else ""}>En Attente</option>
+                        <option value="Terminé" {"selected" if t[2] == "Terminé" else ""}>Terminé</option>
+                    </select>
+                </td>
+                <td><input type="date" name="due_date" value={t[3]} onchange="this.form.submit()" required></td>
+            </form>
+            <form action="/tasks/delete/{t[0]}" method="POST" onsubmit="return confirm('Supprimer cette tâche ?');">
+                <td style="text-align:center;">
+                    <button type="submit"
+                            style="background:none; border:none; color:#ef4444; cursor:pointer;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </form>
         </tr>
         """
 
@@ -376,6 +393,7 @@ def render_tasks(project_id):
           <th>Tâche</th>
           <th>Statut</th>
           <th>Date limite</th>
+          <th>Supprimer</th>
         </tr>
       </thead>
       <tbody>

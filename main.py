@@ -155,18 +155,16 @@ async def update_project(project_id: int, request: Request):
 #     return RG.updateGeneric(params)
 
 
-@app.post("/tasks/update") # Route pour mettre à jour une tâche spécifique
-async def update_task(request: Request):
+@app.post("/tasks/update/{task_id}", response_class=HTMLResponse) # Route pour mettre à jour une tâche spécifique
+async def update_task(task_id: int, request: Request):
     data = dict(await request.form())
 
-    task_id = data.pop("number")
-    params = {"task": task_id}
+    clean_data = {k: v for k, v in data.items() if v != ""}
 
-    for k, v in data.items():
-        if v:
-            params[k] = v
+    db.update("TASKS", task_id, clean_data)
 
-    return RG.updateGeneric(params) # utilisation de la fonction générique 
+    return RG.page_html()
+
 
 
 # ================= UPDATE GENERIQUE =================
