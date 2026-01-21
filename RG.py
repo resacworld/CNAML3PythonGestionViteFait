@@ -341,7 +341,7 @@ def render_projects_rows(): # Génère les lignes HTML pour la liste des projets
         </table>
       </summary>
 
-      <!-- 🔽 TÂCHES DU PROJET -->
+      <!--  TÂCHES DU PROJET -->
       <div class="tasks-box">
         {render_tasks(number)}
       </div>
