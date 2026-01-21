@@ -279,77 +279,89 @@ def pers_assigneed_to_project(project_id): # Récupère les personnes assignées
 
     return ", ".join(assigned_users) if assigned_users else "Aucun"
 
-def render_projects_rows(): # Génère les lignes HTML pour la liste des projets 
+def render_projects_rows():  # Génère les lignes HTML pour la liste des projets
     projects = fetch_all("PROJECTS")
     rows = []
 
     for p in projects:
-        number   = p[0] # identifiant
-        title    = p[1] # titre
-        desc     = p[2] # description
-        begin    = p[3] # date début 
-        end      = p[4] # date fin
-        advance  = p[5] # 0 à 100
-        status   = p[6] # en cours, termine, en attente, bloque, a faire
-        priority = p[7] # Critique, haute, moyenne, basse
+        number   = p[0]  # identifiant
+        title    = p[1]  # titre
+        desc     = p[2]  # description
+        begin    = p[3]  # date début
+        end      = p[4]  # date fin
+        advance  = p[5]  # 0 à 100
+        status   = p[6]  # en cours, terminé, en attente, bloqué, à faire
+        priority = p[7]  # Critique, haute, moyenne, basse
 
         rows.append(f"""
 <tr>
-  <td colspan="8" style="padding:0;">
-    <details class="project-details">
-      <summary>
-        <table style="width:100%; border-collapse:collapse;">
-          <tr>
-            <td style="font-weight:600;">{number}</td>
+    <td colspan="8" style="padding:0;">
+        <details class="project-details">
+            <summary>
+                <table style="width:100%; border-collapse:collapse;">
+                    <tr>
+                        <form action="/projects/update/{number}" method="POST">
+                            <td style="font-weight:600;">{number}</td>
 
-            <td>
-              <strong>{title}</strong><br>
-              <small style="color:#6b7280;">{desc}</small>
-            </td>
+                            <td>
+                                <input type="text" name="title" value="{title}" onchange="this.form.submit()" required style="width:100%; border:none; font-weight:600;">
+                                <br>
+                                <textarea name="description" rows="2" onchange="this.form.submit()" style="width:100%; border:none; resize:none;">{desc}</textarea>
+                            </td>
 
-            <td>
-              <span class="badge status-{status.lower().replace(' ', '-')}">
-                {status}
-              </span>
-            </td>
+                            <td>
+                                <select name="status" onchange="this.form.submit()">
+                                    <option value="A faire" {"selected" if status == "A faire" else ""}>A faire</option>
+                                    <option value="En cours" {"selected" if status == "En cours" else ""}>En cours</option>
+                                    <option value="Terminé" {"selected" if status == "Terminé" else ""}>Terminé</option>
+                                    <option value="En attente" {"selected" if status == "En attente" else ""}>En attente</option>
+                                    <option value="Bloqué" {"selected" if status == "Bloqué" else ""}>Bloqué</option>
+                                </select>
+                            </td>
 
-            <td>
-              <div class="progress">
-                <div class="progress-bar" style="width:{advance}%;">
-                  {advance}%
-                </div>
-              </div>
-            </td>
+                            <td>
+                                <input type="number" name="advance" value="{advance}" min="0" max="100" onchange="this.form.submit()" style="width:60px;">
+                                <div class="progress" style="margin-top:4px;">
+                                    <div class="progress-bar" style="width:{advance}%;">{advance}%</div>
+                                </div>
+                            </td>
 
-            <td>
-              <span class="badge priority-{priority.lower()}">
-                {priority}
-              </span>
-            </td>
+                            <td>
+                                <select name="priority" onchange="this.form.submit()">
+                                    <option value="Critique" {"selected" if priority == "Critique" else ""}>Critique</option>
+                                    <option value="Haute" {"selected" if priority == "Haute" else ""}>Haute</option>
+                                    <option value="Moyenne" {"selected" if priority == "Moyenne" else ""}>Moyenne</option>
+                                    <option value="Basse" {"selected" if priority == "Basse" else ""}>Basse</option>
+                                </select>
+                            </td>
 
-      <td>{end}</td>
+                            <td><input type="date" name="end" value="{end}" onchange="this.form.submit()"></td>
 
-      <td>
-        {pers_assigneed_to_project(number)}
-      </td>
+                            <td>
+                                {pers_assigneed_to_project(number)}
+                            </td>
 
-            <td style="text-align:center;">
-              <a href="/projects/edit/{number}">✏️</a>
-            </td>
-          </tr>
-        </table>
-      </summary>
+                            <td style="white-space:nowrap;">
+                                <a href="/projects/edit/{number}" title="Modifier" style="margin-right:8px;">✏️</a>
+                                <form action="/projects/delete/{number}" method="POST" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
+                                    <button type="submit" style="background:none; border:none; color:#ef4444; cursor:pointer;">🗑️</button>
+                                </form>
+                            </td>
+                        </form>
+                    </tr>
+                </table>
+            </summary>
 
-      <!--  TÂCHES DU PROJET -->
-      <div class="tasks-box">
-        {render_tasks(number)}
-      </div>
-
-    </details>
-  </td>
+            <!-- TÂCHES DU PROJET -->
+            <div class="tasks-box">
+                {render_tasks(number)}
+            </div>
+        </details>
+    </td>
 </tr>
 """)
     return "\n".join(rows), len(projects)
+
 
 def render_tasks(project_id):
     tasks = db.fetch_tasks_for_project(project_id)
