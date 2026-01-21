@@ -91,7 +91,7 @@ def verifier_projet(data):
 def verifier_task(data):
 
     project, title, description, due_date, status, estimated, done, emergency = data.get("project"), data.get("title"), data.get("description"), data.get("due_date"), data.get("status"), data.get("estimated"), data.get("done"), data.get("emergency") # Récupère les données du dictionnaire data
-    print(project, title, description, due_date, status, estimated, done, emergency)
+
     # Nettoyage et vérification des champs obligatoires
     title = title.strip() if title else ""
     description = description.strip() if description else ""
@@ -115,10 +115,9 @@ def verifier_task(data):
     #    return False
 
     # Vérification du statut
-    #if status not in ["À faire", "En cours", "Terminé"]:
-    #    return False
+    if status not in ["A faire", "En cours", "En Attente", "Terminé"]:
+        return False
 
-    print("vrai task")
     return True
 
 def verifier_grant(data):

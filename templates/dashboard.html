@@ -224,7 +224,15 @@
             <label>Description</label><textarea name="description" rows="2"></textarea>
             <div class="form-row">
               <div><label>Date limite</label><input type="date" name="due_date" required></div>
-              <div><label>Statut</label><input type="text" name="status" placeholder="À faire" required></div>
+              <div><label>Statut</label>
+                <select name="status" required>
+                    <option value="">Aucune</option>
+                    <option value="A faire">A faire</option>
+                    <option value="En cours">En cours</option>
+                    <option value="En Attente">En Attente</option>
+                    <option value="Terminé">Terminé</option>
+                </select>
+              </div>
             </div>
             <button type="submit">Enregistrer la tâche</button>
           </form>
