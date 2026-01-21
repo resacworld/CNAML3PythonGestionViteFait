@@ -301,15 +301,15 @@ def render_projects_rows():  # Génère les lignes HTML pour la liste des projet
                 <table style="width:100%; border-collapse:collapse;">
                     <tr>
                         <form action="/projects/update/{number}" method="POST">
-                            <td style="font-weight:600;">{number}</td>
+                            <td style="font-weight:600; width:50px;">{number}</td>
 
-                            <td>
+                            <td style="width: 20%;">
                                 <input type="text" name="title" value="{title}" onchange="this.form.submit()" required style="width:100%; border:none; font-weight:600;">
                                 <br>
                                 <textarea name="description" rows="2" onchange="this.form.submit()" style="width:100%; border:none; resize:none;">{desc}</textarea>
                             </td>
 
-                            <td>
+                            <td style="width: 13%;">
                                 <select name="status" onchange="this.form.submit()">
                                     <option value="A faire" {"selected" if status == "A faire" else ""}>A faire</option>
                                     <option value="En cours" {"selected" if status == "En cours" else ""}>En cours</option>
@@ -319,14 +319,14 @@ def render_projects_rows():  # Génère les lignes HTML pour la liste des projet
                                 </select>
                             </td>
 
-                            <td>
-                                <input type="number" name="advance" value="{advance}" min="0" max="100" onchange="this.form.submit()" style="width:60px;">
+                            <td style="width: 150px;">
+                                <input type="number" name="advance" value="{advance}" min="0" max="100" onchange="this.form.submit()">
                                 <div class="progress" style="margin-top:4px;">
                                     <div class="progress-bar" style="width:{advance}%;">{advance}%</div>
                                 </div>
                             </td>
 
-                            <td>
+                            <td style="width: 13%;">
                                 <select name="priority" onchange="this.form.submit()">
                                     <option value="Critique" {"selected" if priority == "Critique" else ""}>Critique</option>
                                     <option value="Haute" {"selected" if priority == "Haute" else ""}>Haute</option>
@@ -335,19 +335,19 @@ def render_projects_rows():  # Génère les lignes HTML pour la liste des projet
                                 </select>
                             </td>
 
-                            <td><input type="date" name="end" value="{end}" onchange="this.form.submit()"></td>
+                            <td style="width: 16%;"><input type="date" name="end" value="{end}" onchange="this.form.submit()"></td>
 
-                            <td>
+                            <td style="width: auto;">
                                 {pers_assigneed_to_project(number)}
                             </td>
+                        </form>
 
-                            <td style="white-space:nowrap;">
+                            <td style="white-space:nowrap; width:140px; text-align:center;">
                                 <a href="/projects/edit/{number}" title="Modifier" style="margin-right:8px;">✏️</a>
                                 <form action="/projects/delete/{number}" method="POST" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
                                     <button type="submit" style="background:none; border:none; color:#ef4444; cursor:pointer;">🗑️</button>
                                 </form>
                             </td>
-                        </form>
                     </tr>
                 </table>
             </summary>
