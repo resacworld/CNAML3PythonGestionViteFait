@@ -1,42 +1,14 @@
-import sqlite3                                                      # Gestion de la base de données SQLite
-import re                                                           # Module pour les expressions régulières    
-from datetime import datetime                                       # Expressions regulières pour validation
-from db import fetch_all, insert, update, search_all, init_db, fetch_by_id       # Fonction de gestion de la BDD Base de données 
-import db
+import re                                               # Module pour les expressions régulières    
+from datetime import datetime                           # Expressions regulières pour validation
 
-init_db()
-
-
-# ======== LISTING ========
-
-def mesProjects():
-    return fetch_all("PROJECTS") # Récupèere tous les projects de la table Projects
-
-def mesTasks():
-    return fetch_all("TASKS")    # Récupère tous les task de la table Tasks
-   
-def mesUsers():
-    return fetch_all("USERS")    # Récupère tous les users de la table USERS
-
-def mesRoles():
-    return fetch_all("ROLES")   # Récupère tous les roles de la table ROLES
-
-def mesGrants():
-    return fetch_all("GRANTS")  # Récupère tous les grants de la table GRANTS
-
-def mesAlloc():
-    return fetch_all("ALLOC")   # Récupère tous les alloc de la table ALLOC
-
-def mesDepend():
-    return fetch_all("DEPEND")  # Récupère tous les depend de la table DEPEND
-
-# ======== SAVE (CREATE) ========
+# ======== VERIFICATION DES CHAMPS ========
 
 def verifier_user(data):
     
-    name, surname, mail = data.get("name"), data.get("surname"), data.get("mail") # Récupère les données du dictionnaire data
+    # Récupère les données
+    name, surname, mail = data.get("name"), data.get("surname"), data.get("mail")
     
-# Nettoyage et vérification si les champs sont vides
+    # Nettoyage et vérification si les champs sont vides
     name = name.strip() if name else ""
     surname = surname.strip() if surname else ""
     mail = mail.strip() if mail else ""
@@ -48,28 +20,22 @@ def verifier_user(data):
     if not re.match(r"[^@]+@[^@]+\.[^@]+", mail):
         return False
 
-    # tout est valide
     return True
 
 def verifier_projet(data):
-    
-    title, description, begin, end, advance, status, priority = data.get("title"), data.get("description"), data.get("begin"), data.get("end"), data.get("advance"), data.get("status"), data.get("priority") # Récupère les données du dictionnaire data
-    #print(title, description, begin, end, advance, status, priority)
+
+    # Récupère les données 
+    title, description, begin, end, advance, status, priority = data.get("title"), data.get("description"), data.get("begin"), data.get("end"), data.get("advance"), data.get("status"), data.get("priority") 
 
     # Nettoyage des textes
     title = title.strip() if title else ""
     description = description.strip() if description else ""
     
     # Vérification des champs obligatoires
-    if not title or not description:
-        return False
-
-    # Vérification du format des dates (AAAA-MM-JJ)
-    date_pattern = r"^\d{4}-\d{2}-\d{2}$"
-    if not re.match(date_pattern, str(begin)) or not re.match(date_pattern, str(end)):
+    if not title:
         return False
     
-    # 4. Vérification de si la date de début est antérieure à la date de fin
+    # Vérification de si la date de début est antérieure à la date de fin
     if datetime.strptime(str(begin), "%Y-%m-%d") > datetime.strptime(str(end), "%Y-%m-%d"):
         return False
 
@@ -77,7 +43,7 @@ def verifier_projet(data):
     if not (0 <= int(advance) <= 100):
         return False
 
-    # 5. Vérification de la priorité (1 à 5)
+    # Vérification de la priorité (liste autorisée)
     if not str(priority) in ["Critique", "Haute", "Moyenne", "Basse"]:
        return False
 
@@ -96,7 +62,7 @@ def verifier_task(data):
     title = title.strip() if title else ""
     description = description.strip() if description else ""
     
-    if not title or not description or project is None:
+    if not title or project is None:
         return False
 
     # Vérification du format de la date (AAAA-MM-JJ)
@@ -143,7 +109,7 @@ def verifier_grant(data):
     return True
 
 def verifier_alloc(data):
-
+    # On récupère les données
     task_id, user_id = data.get("task_id"), data.get("user_id")
 
     # Vérification que les IDs ne sont pas vides
@@ -164,7 +130,7 @@ def verifier_alloc(data):
     return True
 
 def verifier_depend(data):
-
+    # On récupère les données
     task_from_id, task_to_id = data.get("task_from_id"), data.get("task_to_id")
 
     # Vérification que les IDs ne sont pas vides
@@ -188,332 +154,27 @@ def verifier_depend(data):
 
     return True
 
-def saveProject(data):
-    
-    #insert("PROJECTS", data)
+def checkProject(data):
     return verifier_projet(data) # Vérifie les données du projet avant de l'enregistrer
 
-def saveTask(data):
-    #insert("TASKS", data)
+def checkTask(data):
     return verifier_task(data) # Vérifie les données du task avant de l'enregistrer
 
-def saveUser(data):
-    #insert("USERS", data)
+def checkUser(data):
     return verifier_user(data) # Vérifie les données de l'utilisateur avant de l'enregistrer
 
-def saveRole(data):
-    #insert("ROLES", data)
-    return {"status": "Rôle enregistré"} # Pas de vériification spécifique pour les rôles
+def checkRole(data):
+    return True # Pas de vériification spécifique pour les rôles
 
 def saveGrant(data):
-    #insert("GRANTS", data)
     return verifier_grant(data) # Vérifie les données du grant avant de l'enregistrer
 
-def saveAlloc(data):
-    #insert("ALLOC", data)
-    return verifier_alloc(data) # Vérifie les données de l'allocation avant de l'enregistrer
-def saveDepend(data):
-    #insert("DEPEND", data)
-    return verifier_depend(data) # Vérifie les données de la dépendance avant de l'enregistrer
-# ======== UPDATE GENERIQUE ========
+# Commenté car uniquement créer / supprimer coté backend
 
-def updateGeneric(params): # Met à jour une entrée générique dans la base de données  en fonction des paramètres données 
-    mapping = {
-        "project": "PROJECTS",
-        "task": "TASKS",
-        "user": "USERS",
-        "role": "ROLES",
-        "grant": "GRANTS",
-        "alloc": "ALLOC",
-        "depend": "DEPEND",
-    }
+# def saveAlloc(data):
+#     #insert("ALLOC", data)
+#     return verifier_alloc(data) # Vérifie les données de l'allocation avant de l'enregistrer
 
-    for key in mapping:
-        if key in params:
-            table = mapping[key]
-            record_id = params.pop(key, None)
-            if record_id and record_id.isdigit():
-                update(table, int(record_id), params)
-                return { "status": f"{table} modifié" }
-            else:
-                #insert(table, params)
-                return { "status": f"{table} créé" }
-
-    return {"error": "Aucune table reconnue"}
-
-
-# ======== SEARCH GENERIQUE ========
-
-def searchGeneric(query): # Recherche générique dans la base de données en fonction de la requête données
-    if query.upper() in ["PROJECT", "PROJECTS"]:
-        return fetch_all("PROJECTS")
-    if query.upper() in ["TASK", "TASKS"]:
-        return fetch_all("TASKS")
-    if query.upper() in ["USER", "USERS"]:
-        return fetch_all("USERS")
-    if query.upper() in ["ROLE", "ROLES"]:
-        return fetch_all("ROLES")
-    if query.upper() in ["GRANT", "GRANTS"]:
-        return fetch_all("GRANTS")
-    if query.upper() in ["ALLOC"]:
-        return fetch_all("ALLOC")
-    if query.upper() in ["DEPEND"]:
-        return fetch_all("DEPEND")
-
-    return search_all(query)
-
-def pers_assigneed_to_project(project_id): # Récupère les personnes assignées à un projet donné
-    grants = fetch_all("GRANTS")
-    users = fetch_all("USERS")
-
-    assigned_users = []
-    for g in grants:
-        grant_project_id = g[1]
-        user_id = g[2]
-
-        if grant_project_id == project_id:
-            user = next((u for u in users if u[0] == user_id), None)
-            role_of_user = fetch_by_id("ROLES", g[3])[1]
-            if user:
-                assigned_users.append(f"{user[1]} {user[2]} ({role_of_user})") # Nom et prénom
-
-    return ", ".join(assigned_users) if assigned_users else "Aucun"
-
-def render_projects_rows():  # Génère les lignes HTML pour la liste des projets
-    projects = fetch_all("PROJECTS")
-    rows = []
-
-    for p in projects:
-        number   = p[0]  # identifiant
-        title    = p[1]  # titre
-        desc     = p[2]  # description
-        begin    = p[3]  # date début
-        end      = p[4]  # date fin
-        advance  = p[5]  # 0 à 100
-        status   = p[6]  # en cours, terminé, en attente, bloqué, à faire
-        priority = p[7]  # Critique, haute, moyenne, basse
-
-        rows.append(f"""
-<tr>
-    <td colspan="8" style="padding:0;">
-        <details class="project-details">
-            <summary>
-                <table style="width:100%; border-collapse:collapse;">
-                    <tr>
-                        <form action="/projects/update/{number}" method="POST">
-                            <td style="font-weight:600; width:50px;">{number}</td>
-
-                            <td style="width: 20%;">
-                                <input type="text" name="title" value="{title}" onchange="this.form.submit()" required style="width:100%; border:none; font-weight:600;">
-                                <br>
-                                <textarea name="description" rows="2" onchange="this.form.submit()" style="width:100%; border:none; resize:none;">{desc}</textarea>
-                            </td>
-
-                            <td style="width: 13%;">
-                                <select name="status" onchange="this.form.submit()">
-                                    <option value="A faire" {"selected" if status == "A faire" else ""}>A faire</option>
-                                    <option value="En cours" {"selected" if status == "En cours" else ""}>En cours</option>
-                                    <option value="Terminé" {"selected" if status == "Terminé" else ""}>Terminé</option>
-                                    <option value="En attente" {"selected" if status == "En attente" else ""}>En attente</option>
-                                    <option value="Bloqué" {"selected" if status == "Bloqué" else ""}>Bloqué</option>
-                                </select>
-                            </td>
-
-                            <td style="width: 150px;">
-                                <input type="number" name="advance" value="{advance}" min="0" max="100" onchange="this.form.submit()">
-                                <div class="progress" style="margin-top:4px;">
-                                    <div class="progress-bar" style="width:{advance}%;">{advance}%</div>
-                                </div>
-                            </td>
-
-                            <td style="width: 13%;">
-                                <select name="priority" onchange="this.form.submit()">
-                                    <option value="Critique" {"selected" if priority == "Critique" else ""}>Critique</option>
-                                    <option value="Haute" {"selected" if priority == "Haute" else ""}>Haute</option>
-                                    <option value="Moyenne" {"selected" if priority == "Moyenne" else ""}>Moyenne</option>
-                                    <option value="Basse" {"selected" if priority == "Basse" else ""}>Basse</option>
-                                </select>
-                            </td>
-
-                            <td style="width: 16%;"><input type="date" name="end" value="{end}" onchange="this.form.submit()"></td>
-
-                            <td style="width: auto;">
-                                {pers_assigneed_to_project(number)}
-                            </td>
-                        </form>
-
-                            <td style="white-space:nowrap; width:140px; text-align:center;">
-                                <a href="/projects/edit/{number}" title="Modifier" style="margin-right:8px;">✏️</a>
-                                <form action="/projects/delete/{number}" method="POST" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
-                                    <button type="submit" style="background:none; border:none; color:#ef4444; cursor:pointer;">🗑️</button>
-                                </form>
-                            </td>
-                    </tr>
-                </table>
-            </summary>
-
-            <!-- TÂCHES DU PROJET -->
-            <div class="tasks-box">
-                {render_tasks(number)}
-            </div>
-        </details>
-    </td>
-</tr>
-""")
-    return "\n".join(rows), len(projects)
-
-
-def render_tasks(project_id):
-    tasks = db.fetch_tasks_for_project(project_id)
-
-    if not tasks:
-        return "<em>Aucune tâche liée à ce projet</em>"
-
-    rows = ""
-    for t in tasks:
-        rows += f"""
-        <tr>
-            <form action="/tasks/update/{t[0]}" method="POST">
-                <td>{t[0]}</td>
-                <td><input type="text" name="title" value="{t[1]}" onchange="this.form.submit()" required></td>
-                <td>
-                    <select name="status" onchange="this.form.submit()">
-                        <option value="A faire" {"selected" if t[2] == "A faire" else ""}>A faire</option>
-                        <option value="En cours" {"selected" if t[2] == "En cours" else ""}>En cours</option>
-                        <option value="En Attente" {"selected" if t[2] == "En Attente" else ""}>En Attente</option>
-                        <option value="Terminé" {"selected" if t[2] == "Terminé" else ""}>Terminé</option>
-                    </select>
-                </td>
-                <td><input type="date" name="due_date" value={t[3]} onchange="this.form.submit()" required></td>
-            </form>
-            <form action="/tasks/delete/{t[0]}" method="POST" onsubmit="return confirm('Supprimer cette tâche ?');">
-                <td style="text-align:center;">
-                    <button type="submit"
-                            style="background:none; border:none; color:#ef4444; cursor:pointer;">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </form>
-        </tr>
-        """
-
-    return f"""
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Tâche</th>
-          <th>Statut</th>
-          <th>Date limite</th>
-          <th>Supprimer</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows}
-      </tbody>
-    </table>
-    """
-
-def render_user_rows():
-    users = fetch_all("USERS")
-
-    rows = []
-    for u in users:
-        user_id = u[0]
-        name    = u[1]
-        surname = u[2]
-        mail    = u[3]
-
-        rows.append(f"""
-        <tr>
-        <td style="font-weight:600;">{user_id}</td>
-        <td>{name} {surname}</td>
-        <td>{mail}</td>
-        <td style="text-align:center;">
-            <form method="POST"
-                action="/users/delete/{user_id}"
-                style="display:inline;"
-                onsubmit="return confirm('Supprimer cet utilisateur ?');">
-            <button type="submit"
-                    style="background:none; border:none; color:#ef4444; cursor:pointer;">
-                <i class="fas fa-trash"></i>
-            </button>
-            </form>
-        </td>
-        </tr>
-        """) 
-    return "\n".join(rows)
-
-
-
-
-def page_html(mode="main", project=None):
-    html = open("templates/dashboard.html").read()
-
-    if mode == "edit" and project:
-        # Remplacer les placeholders par les valeurs du projet
-        html = html \
-            .replace("{{FORM_ACTION}}", f"/projects/update/{project['id']}") \
-            .replace("{{TITLE}}", project['title']) \
-            .replace("{{DESCRIPTION}}", project['description']) \
-            .replace("{{BEGIN}}", project['begin'] or "") \
-            .replace("{{END}}", project['end'] or "") \
-            .replace("{{ADVANCE}}", str(project['advance'])) \
-            .replace("{{STATUS}}", project['status']) \
-            .replace("{{PRIORITY}}", project['priority']) \
-            .replace("{{PRIORITY_CRITIQUE}}", "selected" if project["priority"] == "Critique" else "") \
-            .replace("{{PRIORITY_HAUTE}}", "selected" if project["priority"] == "Haute" else "") \
-            .replace("{{PRIORITY_MOYENNE}}", "selected" if project["priority"] == "Moyenne" else "") \
-            .replace("{{PRIORITY_BASSE}}", "selected" if project["priority"] == "Basse" else "") \
-            .replace("{{STATUS_EN_COURS}}", "selected" if project["status"] == "En cours" else "") \
-            .replace("{{STATUS_TERMINE}}", "selected" if project["status"] == "Terminé" else "") \
-            .replace("{{STATUS_EN_ATTENTE}}", "selected" if project["status"] == "En attente" else "") \
-            .replace("{{STATUS_BLOQUE}}", "selected" if project["status"] == "Bloqué" else "") \
-            .replace("{{STATUS_A_FAIRE}}", "selected" if project["status"] == "A faire" else "")
-
-    else:
-        # Creation des champs vides pour un nouveau projet
-        html = html \
-          .replace("{{FORM_ACTION}}", "/projects/create") \
-          .replace("{{TITLE}}", "") \
-          .replace("{{DESCRIPTION}}", "") \
-          .replace("{{BEGIN}}", "") \
-          .replace("{{END}}", "") \
-          .replace("{{ADVANCE}}", "") \
-          .replace("{{STATUS}}", "") \
-          .replace("{{PRIORITY}}", "") \
-          .replace("{{PRIORITY_CRITIQUE}}", "") \
-          .replace("{{PRIORITY_HAUTE}}", "") \
-          .replace("{{PRIORITY_MOYENNE}}", "") \
-          .replace("{{PRIORITY_BASSE}}", "") \
-          .replace("{{ADVANCE}}", str(0)) 
-          
-
-    project_rows, count = render_projects_rows() # Génère les lignes HTML pour la liste des projets
-    html = html.replace("{{PROJECT_ROWS}}", project_rows) # Insère les lignes dans le template HTML
-    html = html.replace("{{PROJECT_COUNT}}", str(count)) # Insère le nombre de projets dans le template HTML
-
-    # Affichage de la liste des utilisateurs inscrits
-
-    user_rows = render_user_rows()
-    html = html.replace("{{USER_ROWS}}", user_rows)
-
-    # Affichage des options dans les listes déroulantes
-
-    html = html.replace("{{PROJECT_OPTIONS}}", "\n".join(
-        [f'<option value="{p[0]}">{p[1]}</option>' for p in mesProjects()]
-    ))
-
-    html = html.replace("{{USER_OPTIONS}}", "\n".join(
-        [f'<option value="{u[0]}">{u[1]} {u[2]}</option>' for u in mesUsers()]
-    ))
-
-    html = html.replace("{{ROLE_OPTIONS}}", "\n".join(
-        [f'<option value="{r[0]}">{r[1]}</option>' for r in mesRoles()]
-    ))
-
-    html = html.replace("{{TASK_OPTIONS}}", "\n".join(
-        [f'<option value="{t[0]}">{t[1]}</option>' for t in mesTasks()]
-    ))
-
-    return html
+# def saveDepend(data):
+#     #insert("DEPEND", data)
+#     return verifier_depend(data) # Vérifie les données de la dépendance avant de l'enregistrer

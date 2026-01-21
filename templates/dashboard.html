@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{{TITLE}}</title>
+  <title>Dashboard Victor, Virgile et Mike</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     :root {
@@ -143,74 +143,54 @@
 <div class="container">
   <div class="dashboard-grid">
 
-    <!-- 1. Gestion Projets -->
+    <!-- Gestion Projets -->
     <div class="card">
-      <div class="card-header">Gestion des Projets</div>
+      <div class="card-header">Ajouter un Projet</div>
       <div class="card-body">
-        <!-- <div class="tabs"> -->
-          <!-- <button class="tab active" onclick="openTab(event,'create-project')">Enregistrer</button> -->
-          <!-- <button class="tab" onclick="openTab(event,'edit-project')">Modifier</button> -->
-        <!-- </div> -->
         <div id="create-project" class="tab-content active">
-          <!-- <form method="POST" action="/projects/create"> -->
-          <form method="POST" action="{{FORM_ACTION}}">
+          <form method="POST" action="/projects/create">
 
             <div class="form-row">
-              <div><label>Titre</label><input type="text" name="title" value="{{TITLE}}" required></div>
-              <div><label>Date début</label><input type="date" name="begin" value="{{BEGIN}}" required></div>
+              <div><label>Titre</label><input type="text" name="title" required></div>
+              <div><label>Date début</label><input type="date" name="begin" required></div>
             </div>
-            <label>Description</label><textarea name="description" rows="3">{{DESCRIPTION}}</textarea>
+            <label>Description</label><textarea name="description" rows="3"></textarea>
             <div class="form-row">
-              <div><label>Date fin</label><input type="date" name="end" value="{{END}}" required></div>
-              <div><label>Avancement (%)</label><input type="text" name="advance" placeholder="50" value="{{ADVANCE}}" required></div>
+              <div><label>Date fin</label><input type="date" name="end" required></div>
+              <div><label>Avancement (%)</label><input type="text" name="advance" placeholder="50"required></div>
             </div>
             <div class="form-row">
                 <div>
                 <label>Statut</label>
                 <select name="status" required>
-                    <option value="En cours" {{STATUS_EN_COURS}}>En cours</option>
-                    <option value="Terminé" {{STATUS_TERMINE}}>Terminé</option>
-                    <option value="En attente" {{STATUS_EN_ATTENTE}}>En attente</option>
-                    <option value="Bloqué" {{STATUS_BLOQUE}}>Bloqué</option>
-                    <option value="A faire" {{STATUS_A_FAIRE}}>A faire</option>
+                    <option value="En cours">En cours</option>
+                    <option value="Terminé">Terminé</option>
+                    <option value="En attente">En attente</option>
+                    <option value="Bloqué">Bloqué</option>
+                    <option value="A faire">A faire</option>
                 </select>
                 </div>
                 <div>
                 <label>Priorité</label>
                 <select name="priority" required>
                     <option value="">Aucune</option>
-                    <option value="Critique" {{PRIORITY_CRITIQUE}}>Critique</option>
-                    <option value="Haute" {{PRIORITY_HAUTE}}>Haute</option>
-                    <option value="Moyenne" {{PRIORITY_MOYENNE}}>Moyenne</option>
-                    <option value="Basse" {{PRIORITY_BASSE}}>Basse</option>
+                    <option value="Critique">Critique</option>
+                    <option value="Haute">Haute</option>
+                    <option value="Moyenne">Moyenne</option>
+                    <option value="Basse">Basse</option>
                 </select>
                 </div>
             </div>
             <button type="submit">Enregistrer</button>
           </form>
         </div>
-        <!-- <div id="edit-project" class="tab-content">
-          <form method="POST" action="/projects/update">
-            <label>ID Projet</label><input type="text" name="number" required placeholder="123">
-            <div class="form-row">
-              <div><label>Nouveau titre</label><input type="text" name="title" value="{{TITLE}}" required>"></div>
-              <div><label>Avancement</label><input type="text" name="advance"></div>
-            </div>
-            <button type="submit">Mettre à jour</button>
-          </form>
-          <small>Ne remplir que les champs à modifier</small>
-        </div> -->
       </div>
     </div>
 
-    <!-- 2. Gestion Tâches -->
+    <!-- Gestion Tâches -->
     <div class="card">
-      <div class="card-header">Gestion des Tâches</div>
+      <div class="card-header">Ajouter une Tâche</div>
       <div class="card-body">
-        <!-- <div class="tabs"> -->
-          <!-- <button class="tab active" onclick="openTab(event,'create-task')">Enregistrer</button> -->
-          <!-- <button class="tab" onclick="openTab(event,'edit-task')">Modifier</button> -->
-        <!-- </div> -->
         <div id="create-task" class="tab-content active">
           <form method="POST" action="/tasks/create">
             <div class="form-row">
@@ -219,7 +199,7 @@
                   <option value="">Aucune</option>
                   {{PROJECT_OPTIONS}}
                 </select></div>
-              <div><label>Titre</label><input type="text" name="title" value="{{TITLE}}" required></div>
+              <div><label>Titre</label><input type="text" name="title" required></div>
             </div>
             <label>Description</label><textarea name="description" rows="2"></textarea>
             <div class="form-row">
@@ -237,39 +217,10 @@
             <button type="submit">Enregistrer la tâche</button>
           </form>
         </div>
-        <!-- <div id="edit-task" class="tab-content">
-          <form method="POST" action="/tasks/update">
-            <label>ID Tâche</label><input type="text" name="number" required>
-            <div class="form-row">
-              <div><label>Nouveau statut</label><input type="text" name="status"></div>
-              <div><label>Date de fin</label><input type="date" name="done"></div>
-            </div>
-            <button type="submit">Mettre à jour</button>
-          </form>
-        </div> -->
       </div>
     </div>
 
-    <!-- 3. Utilisateurs & Rôles -->
-    <div class="card">
-      <div class="card-header">Utilisateurs & Rôles</div>
-      <div class="card-body">
-        <form method="POST" action="/users/create" style="margin-bottom:1.5rem;">
-          <div class="form-row">
-            <div><label>Nom</label><input type="text" name="name" required></div>
-            <div><label>Prénom</label><input type="text" name="surname" required></div>
-          </div>
-          <label>Email</label><input type="email" name="mail" required>
-          <button type="submit">Enregistrer l'utilisateur</button>
-        </form>
-        <form method="POST" action="/roles/create">
-          <label>Nouveau rôle</label><input type="text" name="description" placeholder="ex: Chef de projet" required>
-          <button type="submit">Enregistrer le rôle</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- 4. Permissions & Allocations -->
+    <!-- Permissions & Allocations -->
     <div class="card">
       <div class="card-header">Permissions & Allocations</div>
       <div class="card-body">
@@ -296,12 +247,12 @@
           </div>
           <button type="submit">Accorder rôle</button>
         </form>
-        <form method="POST" action="/alloc/create">
+        <form method="POST" action="/grants/delete/">
           <div class="form-row">
-            <div><label>Tâche</label>
-              <select name="task" required>
+            <div><label>Projet</label>
+              <select name="project" required>
                 <option value="">Aucune</option>
-                {{TASK_OPTIONS}}
+                {{PROJECT_OPTIONS}}
               </select>
             </div>
             <div><label>Utilisateur</label>
@@ -310,36 +261,12 @@
                 {{USER_OPTIONS}}
               </select></div>
           </div>
-          <button type="submit">Allouer tâche</button>
+          <button type="submit">Révoquer rôle</button>
         </form>
       </div>
     </div>
 
-    <!-- 5. Dépendances -->
-    <div class="card">
-      <div class="card-header">Dépendances entre tâches</div>
-      <div class="card-body">
-        <form method="POST" action="/depend/create">
-          <div class="form-row">
-            <div><label>Tâche source</label>
-              <select name="task_from" required>
-                <option value="">Aucune</option>
-                {{TASK_OPTIONS}}
-              </select>
-            </div>
-            <div><label>Tâche dépendante</label>
-              <select name="task_to" required>
-                <option value="">Aucune</option>
-                {{TASK_OPTIONS}}
-              </select>
-            </div>
-          </div>
-          <button type="submit">Enregistrer la dépendance</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- 6. LISTE COMPLÈTE DES PROJETS -->
+    <!-- LISTE COMPLÈTE DES PROJETS -->
     <div class="card" style="grid-column:1/-1;">
       <div class="card-header">
         Liste complète des projets
@@ -359,7 +286,7 @@
                 <th style="width: 13%;">Priorité</th>
                 <th style="width: 16%;">Date fin</th>
                 <th>Personne(s)</th>
-                <th style="width:140px; text-align:center;">Actions</th>
+                <th style="width:140px; text-align:center;">Action(s)</th>
               </tr>
             </thead>
             <tbody id="projectsList">
@@ -382,9 +309,9 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Nom</th>
-                <th>Prénom</th>
+                <th>Nom/Prenom</th>
                 <th>Email</th>
+                <th>Action(s)</th>
               </tr>
             </thead>
             <tbody id="usersList">
@@ -392,6 +319,25 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- Utilisateurs & Rôles -->
+    <div class="card">
+      <div class="card-header">Utilisateurs & Rôles</div>
+      <div class="card-body">
+        <form method="POST" action="/users/create" style="margin-bottom:1.5rem;">
+          <div class="form-row">
+            <div><label>Nom</label><input type="text" name="name" required></div>
+            <div><label>Prénom</label><input type="text" name="surname" required></div>
+          </div>
+          <label>Email</label><input type="email" name="mail" required>
+          <button type="submit">Enregistrer l'utilisateur</button>
+        </form>
+        <form method="POST" action="/roles/create">
+          <label>Nouveau rôle</label><input type="text" name="description" placeholder="ex: Chef de projet" required>
+          <button type="submit">Enregistrer le rôle</button>
+        </form>
       </div>
     </div>
 
